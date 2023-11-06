@@ -1,5 +1,5 @@
 use cosmwasm_std::{
-    Coin, DepsMut, Env, MessageInfo, Response,
+    BankMsg, CosmosMsg, Coin, DepsMut, Env, MessageInfo, Response,
 };
 
 use crate::state::{State, STATE};
@@ -49,7 +49,7 @@ pub fn execute_deposit(
 
 pub fn execute_claim(
     deps: DepsMut,
-    _env: Env,
+    env: Env,
     info: MessageInfo,
 ) -> Result<Response, ContractError> {
     let state = STATE.load(deps.storage)?;
@@ -59,11 +59,34 @@ pub fn execute_claim(
         return Err(ContractError::Unauthorized {});
     }
 
-    // XXX TODO: Process gameover withdrawal
+    // Query transferrable amount
+    let contract_funds = deps.querier.query_balance(env.contract.address, DENOM)?;
+
+    // Transfer claim prizes
+    let bank_transfer_msg = BankMsg::Send {
+        to_address: info.sender.clone().into(),
+        amount: vec![contract_funds],
+    };
+    let bank_transfer: CosmosMsg = cosmwasm_std::CosmosMsg::Bank(bank_transfer_msg);
+
+    // Reset game
+    let new_expiration: u64 = env.block.time.seconds() + state.reset_length.clone();
+    let state_reset = State {
+        owner: state.owner,
+        expiration: new_expiration,
+        min_deposit: state.min_deposit,
+        last_deposit: env.block.time.seconds(),
+        last_depositer: info.sender.clone(),
+        extensions: state.extensions,
+        reset_length: state.reset_length,
+        gameover: false,
+    };
+    STATE.save(deps.storage, &state_reset)?;
 
     Ok(Response::new()
         .add_attribute("action", "execute_claim")
-        .add_attribute("claimant", info.sender))
+        .add_attribute("claimant", info.sender)
+        .add_message(bank_transfer))
 }
 
 pub fn check_sent_required_payment(

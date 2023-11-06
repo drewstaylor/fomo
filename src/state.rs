@@ -13,6 +13,7 @@ pub struct State {
     pub last_deposit: u64,
     pub last_depositer: Addr,
     pub extensions: u64,
+    pub reset_length: u64,
     pub gameover: bool,
 }
 impl State {

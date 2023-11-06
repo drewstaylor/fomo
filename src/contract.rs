@@ -30,6 +30,7 @@ pub fn instantiate(
         last_deposit: env.block.time.seconds(),
         last_depositer: info.sender.clone(),
         extensions: msg.extensions,
+        reset_length: msg.reset_length,
         gameover: false,
     };
     set_contract_version(deps.storage, CONTRACT_NAME, CONTRACT_VERSION)?;
@@ -88,11 +89,13 @@ mod tests {
     fn instantiate_contract(deps: DepsMut) -> Response {
         let env = mock_env();
         let extends: u64 = 1000;
+        let reset: u64 = extends * 5;
         let expires: u64 = env.block.time.seconds() + extends.clone();
         
         let msg = InstantiateMsg {
             expiration: expires,
             min_deposit: Uint128::from(1000000u128),
+            reset_length: reset, 
             extensions: extends,
         };
         let info = mock_info("creator", &coins(1000, "token"));
