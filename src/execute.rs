@@ -16,29 +16,33 @@ pub fn execute_deposit(
     info: MessageInfo,
 ) -> Result<Response, ContractError> {
     let mut state = STATE.load(deps.storage)?;
+
+    // Game must be active
     if state.gameover {
         return Err(ContractError::Unauthorized {});
     }
 
-    // Determine if gameover, and sender will 
-    // be able to call ExecuteMsg::Claim
+    // Determine if game is ending
+    // (e.g. sender will be able to call ExecuteMsg::Claim)
     if state.is_expired(&env.block) {
         state.gameover = true;
     }
 
+    // Sender must have sent correct funds
     let required_payment = Coin {
         denom: DENOM.to_string(),
         amount: state.min_deposit,
     };
     check_sent_required_payment(&info.funds, Some(required_payment), state.clone())?;
 
+    // If game is not ending, extend timer
+    // and update last deposit info
     if !state.gameover {
         let new_expiration: u64 = state.expiration + state.extensions;
         state.expiration = new_expiration;
         state.last_deposit = env.block.time.seconds();
         state.last_depositer = info.sender.clone();
     }
-
     STATE.save(deps.storage, &state)?;
 
     Ok(Response::new()
