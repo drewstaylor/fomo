@@ -16,7 +16,7 @@ pub fn execute_deposit(
     info: MessageInfo,
 ) -> Result<Response, ContractError> {
     let mut state = STATE.load(deps.storage)?;
-    if state.gameover.clone() {
+    if state.gameover {
         return Err(ContractError::Unauthorized {});
     }
 
@@ -53,9 +53,14 @@ pub fn execute_claim(
     info: MessageInfo,
 ) -> Result<Response, ContractError> {
     let state = STATE.load(deps.storage)?;
+
+    // Game must be owner
     if !state.gameover {
         return Err(ContractError::Unauthorized {});
-    } else if info.sender.clone() != state.last_depositer {
+    }
+    
+    // Caller must be winner
+    if info.sender.clone() != state.last_depositer {
         return Err(ContractError::Unauthorized {});
     }
 
@@ -70,7 +75,7 @@ pub fn execute_claim(
     let bank_transfer: CosmosMsg = cosmwasm_std::CosmosMsg::Bank(bank_transfer_msg);
 
     // Reset game
-    let new_expiration: u64 = env.block.time.seconds() + state.reset_length.clone();
+    let new_expiration: u64 = env.block.time.seconds() + state.reset_length;
     let state_reset = State {
         owner: state.owner,
         expiration: new_expiration,
