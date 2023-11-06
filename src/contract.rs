@@ -12,6 +12,11 @@ use crate::msg::{ExecuteMsg, InstantiateMsg, QueryMsg};
 use crate::state::{State, STATE};
 use crate::error::ContractError;
 
+// Mainnet
+// pub static DENOM: &str = "aarch";
+// Testnet
+pub static DENOM: &str = "aconst";
+
 // version info for migration info
 const CONTRACT_NAME: &str = "crates.io:fomo";
 const CONTRACT_VERSION: &str = env!("CARGO_PKG_VERSION");

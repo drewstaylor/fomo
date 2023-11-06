@@ -2,13 +2,9 @@ use cosmwasm_std::{
     BankMsg, CosmosMsg, Coin, DepsMut, Env, MessageInfo, Response,
 };
 
+use crate::contract::DENOM;
 use crate::state::{State, STATE};
 use crate::error::ContractError;
-
-// Mainnet
-// pub static DENOM: &str = "aarch";
-// Testnet
-pub static DENOM: &str = "aconst";
 
 pub fn execute_deposit(
     deps: DepsMut,
