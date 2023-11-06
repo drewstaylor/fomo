@@ -69,11 +69,10 @@ pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use cosmwasm_std::Uint128;
     use cosmwasm_std::testing::{
         mock_dependencies, mock_env, mock_info,
     };
-    use cosmwasm_std::{coins};
+    use cosmwasm_std::{coins, Uint128};
 
     #[test]
     fn can_instantiate() {
