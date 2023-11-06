@@ -3,7 +3,7 @@ use std::path::PathBuf;
 
 use cosmwasm_schema::{export_schema, remove_schemas, schema_for};
 
-use fomo::msg::{ExecuteMsg, HelloResponse, InstantiateMsg, QueryMsg};
+use fomo::msg::{ExecuteMsg, InstantiateMsg, QueryMsg};
 use fomo::state::State;
 
 fn main() {
@@ -16,5 +16,4 @@ fn main() {
     export_schema(&schema_for!(ExecuteMsg), &out_dir);
     export_schema(&schema_for!(QueryMsg), &out_dir);
     export_schema(&schema_for!(State), &out_dir);
-    export_schema(&schema_for!(HelloResponse), &out_dir);
 }
