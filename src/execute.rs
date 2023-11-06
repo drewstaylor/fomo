@@ -94,6 +94,8 @@ pub fn execute_claim(
         .add_message(bank_transfer))
 }
 
+// check_sent_required_payment does not require sent funds
+// if the game is ending (e.g. gameover == true)
 pub fn check_sent_required_payment(
     sent: &[Coin],
     required: Option<Coin>,
