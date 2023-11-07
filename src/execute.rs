@@ -54,7 +54,7 @@ pub fn execute_claim(
 ) -> Result<Response, ContractError> {
     let state = STATE.load(deps.storage)?;
 
-    // Game must be owner
+    // Game must be over
     if !state.gameover {
         return Err(ContractError::Unauthorized {});
     }
