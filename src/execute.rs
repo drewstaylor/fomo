@@ -60,7 +60,7 @@ pub fn execute_claim(
     }
     
     // Caller must be winner
-    if info.sender.clone() != state.last_depositer {
+    if info.sender != state.last_depositer {
         return Err(ContractError::Unauthorized {});
     }
 
