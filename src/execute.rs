@@ -52,7 +52,13 @@ pub fn execute_claim(
     env: Env,
     info: MessageInfo,
 ) -> Result<Response, ContractError> {
-    let state = STATE.load(deps.storage)?;
+    let mut state = STATE.load(deps.storage)?;
+
+    // Determine if game is ending, but
+    // hasn't been declared in execute_deposit
+    if !state.gameover && state.is_expired(&env.block) {
+        state.gameover = true;
+    }
 
     // Game must be over
     if !state.gameover {
