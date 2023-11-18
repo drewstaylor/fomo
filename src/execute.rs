@@ -18,18 +18,18 @@ pub fn execute_deposit(
         return Err(ContractError::Unauthorized {});
     }
 
-    // Determine if game is ending
-    // (e.g. sender will be able to call ExecuteMsg::Claim)
-    if state.is_expired(&env.block) {
-        state.gameover = true;
-    }
-
     // Sender must have sent correct funds
     let required_payment = Coin {
         denom: DENOM.to_string(),
         amount: state.min_deposit,
     };
     check_sent_required_payment(&info.funds, Some(required_payment), state.clone())?;
+
+    // Determine if game is ending
+    // (e.g. sender will be able to call ExecuteMsg::Claim)
+    if state.is_expired(&env.block) {
+        state.gameover = true;
+    }
 
     // If game is not ending, extend timer
     // and update last deposit info
