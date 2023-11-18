@@ -29,11 +29,9 @@ pub fn execute_deposit(
     // (e.g. sender will be able to call ExecuteMsg::Claim)
     if state.is_expired(&env.block) {
         state.gameover = true;
-    }
-
     // If game is not ending, extend timer
     // and update last deposit info
-    if !state.gameover {
+    } else {
         let new_expiration: u64 = state.expiration + state.extensions;
         state.expiration = new_expiration;
         state.last_deposit = env.block.time.seconds();
