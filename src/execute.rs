@@ -26,7 +26,7 @@ pub fn execute_deposit(
     check_sent_required_payment(&info.funds, Some(required_payment), state.clone())?;
 
     // Determine if game is ending
-    // (e.g. sender will be able to call ExecuteMsg::Claim)
+    // (e.g. ExecuteMsg::Claim can be called by last_depositer)
     if state.is_expired(&env.block) {
         state.gameover = true;
     // If game is not ending, extend timer
@@ -50,16 +50,10 @@ pub fn execute_claim(
     env: Env,
     info: MessageInfo,
 ) -> Result<Response, ContractError> {
-    let mut state = STATE.load(deps.storage)?;
-
-    // Determine if game is ending, but
-    // hasn't been declared in execute_deposit
-    if !state.gameover && state.is_expired(&env.block) {
-        state.gameover = true;
-    }
+    let state = STATE.load(deps.storage)?;
 
     // Game must be over
-    if !state.gameover {
+    if !state.is_expired(&env.block) {
         return Err(ContractError::Unauthorized {});
     }
     
