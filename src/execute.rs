@@ -79,7 +79,7 @@ pub fn execute_claim(
 
     Ok(Response::new()
         .add_attribute("action", "execute_claim")
-        .add_attribute("claimant", info.sender)
+        .add_attribute("winner", info.sender)
         .add_message(bank_transfer))
 }
 

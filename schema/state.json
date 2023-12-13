@@ -5,7 +5,6 @@
   "required": [
     "expiration",
     "extensions",
-    "gameover",
     "last_deposit",
     "last_depositer",
     "min_deposit",
@@ -22,9 +21,6 @@
       "type": "integer",
       "format": "uint64",
       "minimum": 0.0
-    },
-    "gameover": {
-      "type": "boolean"
     },
     "last_deposit": {
       "type": "integer",
