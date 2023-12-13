@@ -14,8 +14,8 @@ pub fn execute_deposit(
     let mut state = STATE.load(deps.storage)?;
 
     // Game must be active
-    if state.gameover {
-        return Err(ContractError::Unauthorized {});
+    if state.is_expired(&env.block) {
+        return Err(ContractError::Gameover {});
     }
 
     // Sender must have sent correct funds
@@ -23,26 +23,18 @@ pub fn execute_deposit(
         denom: DENOM.to_string(),
         amount: state.min_deposit,
     };
-    check_sent_required_payment(&info.funds, Some(required_payment), state.clone())?;
+    check_sent_required_payment(&info.funds, Some(required_payment))?;
 
-    // Determine if game is ending
-    // (e.g. ExecuteMsg::Claim can be called by last_depositer)
-    if state.is_expired(&env.block) {
-        state.gameover = true;
-    // If game is not ending, extend timer
-    // and update last deposit info
-    } else {
-        let new_expiration: u64 = state.expiration + state.extensions;
-        state.expiration = new_expiration;
-        state.last_deposit = env.block.time.seconds();
-        state.last_depositer = info.sender.clone();
-    }
+    // Update state with deposit parameters
+    let new_expiration: u64 = state.expiration + state.extensions;
+    state.expiration = new_expiration;
+    state.last_deposit = env.block.time.seconds();
+    state.last_depositer = info.sender.clone();
     STATE.save(deps.storage, &state)?;
 
     Ok(Response::new()
         .add_attribute("action", "execute_deposit")
-        .add_attribute("depositer", info.sender)
-        .add_attribute("gameover", state.gameover.to_string()))
+        .add_attribute("depositer", info.sender))
 }
 
 pub fn execute_claim(
@@ -82,7 +74,6 @@ pub fn execute_claim(
         last_depositer: info.sender.clone(),
         extensions: state.extensions,
         reset_length: state.reset_length,
-        gameover: false,
     };
     STATE.save(deps.storage, &state_reset)?;
 
@@ -92,16 +83,10 @@ pub fn execute_claim(
         .add_message(bank_transfer))
 }
 
-// check_sent_required_payment does not require sent funds
-// if the game is ending (e.g. gameover == true)
 pub fn check_sent_required_payment(
     sent: &[Coin],
     required: Option<Coin>,
-    state: State,
 ) -> Result<(), ContractError> {
-    if state.gameover {
-        return Ok(())
-    }
     if let Some(required_coin) = required {
         let required_amount = required_coin.amount.u128();
         if required_amount > 0 {

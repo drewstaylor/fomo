@@ -14,7 +14,6 @@ pub struct State {
     pub last_depositer: Addr,
     pub extensions: u64,
     pub reset_length: u64,
-    pub gameover: bool,
 }
 impl State {
     pub fn is_expired(&self, block: &BlockInfo) -> bool {

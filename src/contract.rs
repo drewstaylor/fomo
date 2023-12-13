@@ -36,7 +36,6 @@ pub fn instantiate(
         last_depositer: info.sender.clone(),
         extensions: msg.extensions,
         reset_length: msg.reset_length,
-        gameover: false,
     };
     set_contract_version(deps.storage, CONTRACT_NAME, CONTRACT_VERSION)?;
     STATE.save(deps.storage, &state)?;
