@@ -87,7 +87,7 @@ pub fn check_sent_required_payment(
     sent: &[Coin],
     required: Option<Coin>,
 ) -> Result<(), ContractError> {
-    if let Some(required_coin) = required {
+    if let Some(ref required_coin) = required {
         let required_amount = required_coin.amount.u128();
         if required_amount > 0 {
             let sent_sufficient_funds = sent.iter().any(|coin| {
@@ -99,7 +99,7 @@ pub fn check_sent_required_payment(
             if sent_sufficient_funds {
                 return Ok(());
             } else {
-                return Err(ContractError::Unauthorized {});
+                return Err(ContractError::InsufficientFunds { required });
             }
         }
     }
