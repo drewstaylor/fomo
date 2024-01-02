@@ -30,7 +30,7 @@ pub fn instantiate(
 ) -> Result<Response, ContractError> {
     let state = State {
         owner: info.sender.clone(),
-        expiration: msg.expiration,
+        expiration: msg.expiration + env.block.time.seconds(),
         min_deposit: msg.min_deposit,
         last_deposit: env.block.time.seconds(),
         last_depositer: info.sender.clone(),

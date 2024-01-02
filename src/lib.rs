@@ -1,5 +1,7 @@
-pub mod contract;
 mod error;
+mod integration_tests;
+
+pub mod contract;
 pub mod execute;
 pub mod query;
 pub mod msg;
