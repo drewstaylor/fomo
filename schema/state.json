@@ -6,10 +6,11 @@
     "expiration",
     "extensions",
     "last_deposit",
-    "last_depositer",
+    "last_depositor",
     "min_deposit",
     "owner",
-    "reset_length"
+    "reset_length",
+    "round"
   ],
   "properties": {
     "expiration": {
@@ -27,7 +28,7 @@
       "format": "uint64",
       "minimum": 0.0
     },
-    "last_depositer": {
+    "last_depositor": {
       "$ref": "#/definitions/Addr"
     },
     "min_deposit": {
@@ -37,6 +38,11 @@
       "$ref": "#/definitions/Addr"
     },
     "reset_length": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0.0
+    },
+    "round": {
       "type": "integer",
       "format": "uint64",
       "minimum": 0.0
