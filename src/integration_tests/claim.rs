@@ -151,6 +151,7 @@ fn test_claim() {
     assert_eq!(game_query.round, 2_u64);
 
     // depositing can resume
+    // fund amounts >= min_deposit will succeed
     let _res = app
         .execute_contract(
             first_depositor, 
@@ -158,10 +159,10 @@ fn test_claim() {
             &ExecuteMsg::Deposit{}, 
             &[Coin {
                 denom: String::from(DENOM),
-                amount: Uint128::from(1000000000000000000_u128)
+                amount: Uint128::from(2000000000000000000_u128)
             }]
         )
         .unwrap();
     let fomo_balance: Coin = bank_query(&mut app, &fomo_addr);
-    assert_eq!(fomo_balance.amount, Uint128::from(1000000000000000000_u128));
+    assert_eq!(fomo_balance.amount, Uint128::from(2000000000000000000_u128));
 }
