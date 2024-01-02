@@ -1,5 +1,5 @@
 pub mod util;
 
 mod deposit;
-// mod claim;
+mod claim;
 // mod reset;

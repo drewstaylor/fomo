@@ -20,20 +20,19 @@ use crate::state::{State};
 fn test_deposit() {
     let mut app = mock_app();
     
-    // Fomo owner deploys fomo
+    // fomo owner deploys fomo
     let fomo_admin = Addr::unchecked("fomo_deployer");
     // depositor owns ARCH
     let depositor = Addr::unchecked("arch_owner");
 
-    // Mint native to depositor
+    // mint native to depositor
     mint_native(
         &mut app,
         depositor.to_string(),
         Uint128::from(100000000000000000000_u128), // 100 ARCH as aarch
     );
 
-    
-    // Contract settings
+    // contract settings
     let expiration: u64 = 604800; // ~1 week
     let min_deposit =  Uint128::from(1000000000000000000_u128); // 1 ARCH as aarch
     let extension_length: u64 = 3600; // 1 hour 
@@ -49,7 +48,7 @@ fn test_deposit() {
         reset_length,
     );
 
-    // Contract balance (fomo prize) is currently 0
+    // contract balance (fomo prize) is currently 0
     let fomo_balance: Coin = bank_query(&mut app, &fomo_addr);
     assert_eq!(fomo_balance.amount, Uint128::from(0_u128));
 
@@ -66,7 +65,7 @@ fn test_deposit() {
         ).is_err()
     );
 
-    // depositing a valid amount must correctly increase the game timer
+    // depositing a valid amount must increase the game timer
     let initial_game_state: State = query(
         &mut app,
         fomo_addr.clone(),
@@ -91,7 +90,7 @@ fn test_deposit() {
     let expected_expiration: u64 = initial_game_state.expiration + extension_length;
     assert_eq!(game_query.expiration, expected_expiration);
 
-    // Prize pool must be correctly increased
+    // prize pool must be increased
     let fomo_balance: Coin = bank_query(&mut app, &fomo_addr);
     assert_eq!(fomo_balance.amount, Uint128::from(1000000000000000000_u128));
 }

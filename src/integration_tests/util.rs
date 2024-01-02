@@ -2,8 +2,8 @@
 use serde::{de::DeserializeOwned, Serialize};
 
 use cosmwasm_std::{
-    Addr, BalanceResponse as BalanceResponseBank, BankQuery, Coin, Empty, from_binary, Querier, QueryRequest, 
-    StdError, to_binary, Uint128, WasmQuery,
+    Addr, BalanceResponse as BalanceResponseBank, BankQuery, Coin, Empty, from_binary, Querier, 
+    QueryRequest, StdError, Timestamp, to_binary, Uint128, WasmQuery,
 };
 use cw_multi_test::{
     App, Contract, ContractWrapper, Executor,
@@ -14,6 +14,17 @@ use crate::contract::DENOM;
 
 pub fn mock_app() -> App {
     App::default()
+}
+
+pub fn get_block_time(router: &mut App) -> u64 {
+    router.block_info().time.seconds()
+}
+
+pub fn increment_block_time(router: &mut App, new_time: u64, height_incr: u64) {
+    let mut curr = router.block_info();
+    curr.height = curr.height + height_incr;
+    curr.time = Timestamp::from_seconds(new_time);
+    router.set_block(curr);
 }
 
 pub fn contract_fomo() -> Box<dyn Contract<Empty>> {

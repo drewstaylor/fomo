@@ -29,7 +29,7 @@ pub fn execute_deposit(
     let new_expiration: u64 = state.expiration + state.extensions;
     state.expiration = new_expiration;
     state.last_deposit = env.block.time.seconds();
-    state.last_depositer = info.sender.clone();
+    state.last_depositor = info.sender.clone();
     STATE.save(deps.storage, &state)?;
 
     Ok(Response::new()
@@ -50,7 +50,7 @@ pub fn execute_claim(
     }
     
     // Caller must be winner
-    if info.sender != state.last_depositer {
+    if info.sender != state.last_depositor {
         return Err(ContractError::Unauthorized {});
     }
 
@@ -71,9 +71,10 @@ pub fn execute_claim(
         expiration: new_expiration,
         min_deposit: state.min_deposit,
         last_deposit: env.block.time.seconds(),
-        last_depositer: info.sender.clone(),
+        last_depositor: info.sender.clone(),
         extensions: state.extensions,
         reset_length: state.reset_length,
+        round: state.round + 1,
     };
     STATE.save(deps.storage, &state_reset)?;
 

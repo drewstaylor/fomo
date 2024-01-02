@@ -33,9 +33,10 @@ pub fn instantiate(
         expiration: msg.expiration + env.block.time.seconds(),
         min_deposit: msg.min_deposit,
         last_deposit: env.block.time.seconds(),
-        last_depositer: info.sender.clone(),
+        last_depositor: info.sender.clone(),
         extensions: msg.extensions,
         reset_length: msg.reset_length,
+        round: 1_u64,
     };
     set_contract_version(deps.storage, CONTRACT_NAME, CONTRACT_VERSION)?;
     STATE.save(deps.storage, &state)?;
