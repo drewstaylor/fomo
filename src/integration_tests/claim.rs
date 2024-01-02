@@ -136,8 +136,8 @@ fn test_claim() {
     let fomo_balance: Coin = bank_query(&mut app, &fomo_addr);
     assert_eq!(fomo_balance.amount, Uint128::from(0_u128));
 
-    // second_depositor's balance is now 2 ARCH 
-    // (first deposit + second deposit)
+    // second_depositor's balance is now 17 ARCH 
+    // (seed funds + first deposit + second deposit)
     let winner_balance: Coin = bank_query(&mut app, &second_depositor);
     assert_eq!(winner_balance.amount, Uint128::from(17000000000000000000_u128));
 
