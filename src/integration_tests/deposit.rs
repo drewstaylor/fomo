@@ -46,6 +46,7 @@ fn test_deposit() {
         min_deposit.clone(),
         extension_length.clone(),
         reset_length,
+        &[],
     );
 
     // contract balance (fomo prize) is currently 0

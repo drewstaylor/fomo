@@ -43,6 +43,7 @@ pub fn create_fomo(
     min_deposit: Uint128, 
     extensions: u64,
     reset_length: u64,
+    funds: &[Coin],
 ) -> Addr {
     let fomo_id = router.store_code(contract_fomo());
     let msg = InstantiateMsg {
@@ -52,7 +53,7 @@ pub fn create_fomo(
         reset_length,
     };
     let fomo_addr = router
-        .instantiate_contract(fomo_id, owner.clone(), &msg, &[], "Fomo", None)
+        .instantiate_contract(fomo_id, owner.clone(), &msg, funds, "Fomo", None)
         .unwrap();
     
     fomo_addr

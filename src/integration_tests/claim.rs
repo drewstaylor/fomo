@@ -23,12 +23,17 @@ fn test_claim() {
     
     // fomo owner deploys fomo
     let fomo_admin = Addr::unchecked("fomo_deployer");
-    // depositor owns ARCH
+    // first_depositor owns ARCH
     let first_depositor = Addr::unchecked("arch_owner");
     // second_depositor owns ARCH
     let second_depositor = Addr::unchecked("second_arch_owner");
 
-    // mint arch to depositor and second_depositor
+    // mint arch to fomo_admin first_depositor and second_depositor
+    mint_native(
+        &mut app,
+        fomo_admin.to_string(),
+        Uint128::from(15000000000000000000_u128), // 15 ARCH as aarch
+    );
     mint_native(
         &mut app,
         first_depositor.to_string(),
@@ -54,6 +59,10 @@ fn test_claim() {
         min_deposit.clone(),
         extension_length.clone(),
         reset_length,
+        &[Coin {
+            denom: String::from(DENOM),
+            amount: Uint128::from(15000000000000000000_u128)
+        }],
     );
 
     // depositor makes a deposit
@@ -130,7 +139,7 @@ fn test_claim() {
     // second_depositor's balance is now 2 ARCH 
     // (first deposit + second deposit)
     let winner_balance: Coin = bank_query(&mut app, &second_depositor);
-    assert_eq!(winner_balance.amount, Uint128::from(2000000000000000000_u128));
+    assert_eq!(winner_balance.amount, Uint128::from(17000000000000000000_u128));
 
     // game was correctly restarted, and
     // round was increased
