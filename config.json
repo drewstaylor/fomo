@@ -2,7 +2,72 @@
   "useTemplate": false,
   "name": "fomo",
   "developer": {
-    "deployments": []
+    "deployments": [
+      {
+        "project": "fomo",
+        "type": "set-metadata",
+        "chainId": "constantine-3",
+        "codeId": 1885,
+        "txhash": "F1BA7F1090F9FD3177CFAC7BC4D6EC1664D835EC0C931BA30E796020E49E05F8",
+        "contract": "archway1dqz0jn2gpzd7elplk49sdcrxrepjac2zw5lhq28ddqagru3uhw3s35drzq",
+        "contractMetadata": {
+          "ownerAddress": "archway1f395p0gg67mmfd5zcqvpnp9cxnu0hg6r9hfczq",
+          "rewardsAddress": "archway1f395p0gg67mmfd5zcqvpnp9cxnu0hg6r9hfczq"
+        }
+      },
+      {
+        "project": "fomo",
+        "type": "instantiate",
+        "chainId": "constantine-3",
+        "codeId": 1885,
+        "txhash": "EC9E9BC5FB54E9670F2DE67F3601FD92CD18103B2F144B23E8015EAC8719AD53",
+        "address": "archway1dqz0jn2gpzd7elplk49sdcrxrepjac2zw5lhq28ddqagru3uhw3s35drzq",
+        "admin": "archway1f395p0gg67mmfd5zcqvpnp9cxnu0hg6r9hfczq",
+        "label": "fomo 0.1.0",
+        "args": {
+          "expiration": 604800,
+          "min_deposit": "1000000000000000000",
+          "extensions": 120,
+          "reset_length": 604800
+        }
+      },
+      {
+        "project": "fomo",
+        "type": "set-metadata",
+        "chainId": "constantine-3",
+        "codeId": 1885,
+        "txhash": "1DD7563C934ABED134844145866D4C10C85F234F06701147210502769381E481",
+        "contract": "archway1me3fuk5jguvm05ju7extujt4jqnpzxehct8necrtx9mt4vlzzvtswmxfmj",
+        "contractMetadata": {
+          "ownerAddress": "archway1f395p0gg67mmfd5zcqvpnp9cxnu0hg6r9hfczq",
+          "rewardsAddress": "archway1f395p0gg67mmfd5zcqvpnp9cxnu0hg6r9hfczq"
+        }
+      },
+      {
+        "project": "fomo",
+        "type": "instantiate",
+        "chainId": "constantine-3",
+        "codeId": 1885,
+        "txhash": "86CA09243E77972CB3ADF07ADBB21896CFC2D35C18D479513CEC364C2617350A",
+        "address": "archway1me3fuk5jguvm05ju7extujt4jqnpzxehct8necrtx9mt4vlzzvtswmxfmj",
+        "admin": "archway1f395p0gg67mmfd5zcqvpnp9cxnu0hg6r9hfczq",
+        "label": "fomo 0.1.0",
+        "args": {
+          "expiration": 1706042459,
+          "min_deposit": "1000000000000000000",
+          "extensions": 120,
+          "reset_length": 604800
+        }
+      },
+      {
+        "project": "fomo",
+        "type": "store",
+        "chainId": "constantine-3",
+        "codeId": 1885,
+        "checksum": "84badf4ede44bb9e97068c5ce93a771949238c4ddaa311590ebbe1114a6a89b5",
+        "txhash": "6FE6E1ECDD0C32E6DCF30E74D2C84F577CEC356AC02787E29F1835B0C7152B31"
+      }
+    ]
   },
   "network": {
     "name": "constantine",
