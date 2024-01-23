@@ -34,6 +34,7 @@ pub fn execute_deposit(
 
     Ok(Response::new()
         .add_attribute("action", "execute_deposit")
+        .add_attribute("round", state.round.to_string())
         .add_attribute("depositer", info.sender))
 }
 
@@ -66,6 +67,7 @@ pub fn execute_claim(
 
     // Reset game
     let new_expiration: u64 = env.block.time.seconds() + state.reset_length;
+    let round = state.round + 1;
     let state_reset = State {
         owner: state.owner,
         expiration: new_expiration,
@@ -74,13 +76,14 @@ pub fn execute_claim(
         last_depositor: info.sender.clone(),
         extensions: state.extensions,
         reset_length: state.reset_length,
-        round: state.round + 1,
+        round,
     };
     STATE.save(deps.storage, &state_reset)?;
 
     Ok(Response::new()
         .add_attribute("action", "execute_claim")
         .add_attribute("winner", info.sender)
+        .add_attribute("round", round.to_string())
         .add_message(bank_transfer))
 }
 
