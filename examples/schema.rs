@@ -3,8 +3,8 @@ use std::path::PathBuf;
 
 use cosmwasm_schema::{export_schema, remove_schemas, schema_for};
 
-use fomo::msg::{ExecuteMsg, InstantiateMsg, QueryMsg};
-use fomo::state::State;
+use network_wars::msg::{ExecuteMsg, InstantiateMsg, QueryMsg};
+use network_wars::state::State;
 
 fn main() {
     let mut out_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));

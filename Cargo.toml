@@ -1,6 +1,6 @@
 [package]
-name = "fomo"
-version = "0.1.0"
+name = "network-wars"
+version = "0.1.1"
 authors = ["Drew Taylor <drew.taylor@philabs.xyz>"]
 edition = "2021"
 
