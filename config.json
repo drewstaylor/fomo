@@ -1,8 +1,44 @@
 {
   "useTemplate": false,
-  "name": "fomo",
+  "name": "network-wars",
   "developer": {
     "deployments": [
+      {
+        "project": "network-wars",
+        "type": "set-metadata",
+        "chainId": "constantine-3",
+        "codeId": 2037,
+        "txhash": "AD7364D2C16AB798CB960B3B655F171A305AEF103E9871433E3ACC8BE4A4950C",
+        "contract": "archway1nk2vdf34uulacy8k50rzxhsphqz3pfl8wh4r8h5gv2mlt08ytehs5p2a7w",
+        "contractMetadata": {
+          "ownerAddress": "archway1f395p0gg67mmfd5zcqvpnp9cxnu0hg6r9hfczq",
+          "rewardsAddress": "archway1f395p0gg67mmfd5zcqvpnp9cxnu0hg6r9hfczq"
+        }
+      },
+      {
+        "project": "network-wars",
+        "type": "instantiate",
+        "chainId": "constantine-3",
+        "codeId": 2037,
+        "txhash": "93068623A277C76EDA6E4F1EFB83FEE56A091A2560BB721FDA2FC9695A957AE2",
+        "address": "archway1nk2vdf34uulacy8k50rzxhsphqz3pfl8wh4r8h5gv2mlt08ytehs5p2a7w",
+        "admin": "archway1f395p0gg67mmfd5zcqvpnp9cxnu0hg6r9hfczq",
+        "label": "network-wars 0.1.1",
+        "args": {
+          "expiration": 86400,
+          "min_deposit": "1000000000000000000",
+          "extensions": 15,
+          "reset_length": 86400
+        }
+      },
+      {
+        "project": "network-wars",
+        "type": "store",
+        "chainId": "constantine-3",
+        "codeId": 2037,
+        "checksum": "0dbb159b8502d0db5d5d6ae5361db882d17b89503a675a8c629cfa5aa7a82e18",
+        "txhash": "76CBDEF52643FD4C5817B8050EA8D6C2D8A98209E2A3023F5B0D03A085D5D93C"
+      },
       {
         "project": "fomo",
         "type": "set-metadata",
