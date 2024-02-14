@@ -67,6 +67,7 @@ pub fn execute_claim(
 
     // Reset game
     let new_expiration: u64 = env.block.time.seconds() + state.reset_length;
+    let won_round = state.round.to_string();
     let round = state.round + 1;
     let state_reset = State {
         owner: state.owner,
@@ -83,7 +84,7 @@ pub fn execute_claim(
     Ok(Response::new()
         .add_attribute("action", "execute_claim")
         .add_attribute("winner", info.sender)
-        .add_attribute("round", round.to_string())
+        .add_attribute("round", won_round)
         .add_message(bank_transfer))
 }
 
