@@ -9,6 +9,9 @@ pub enum ContractError {
     #[error("Unauthorized")]
     Unauthorized {},
 
+    #[error("Invalid input")]
+    InvalidInput {},
+
     #[error("Insufficient funds")]
     InsufficientFunds {
         required: Option<Coin>,

@@ -4,11 +4,11 @@ use cosmwasm_std::{
     to_binary, Binary, Deps, DepsMut, Env, MessageInfo, Response, 
     StdResult,
 };
-use cw2::set_contract_version;
+use cw2::{get_contract_version, set_contract_version};
 
 use crate::execute::{execute_claim, execute_deposit};
 use crate::query::{query_game};
-use crate::msg::{ExecuteMsg, InstantiateMsg, QueryMsg};
+use crate::msg::{ExecuteMsg, InstantiateMsg, MigrateMsg, QueryMsg};
 use crate::state::{State, STATE};
 use crate::error::ContractError;
 
@@ -64,6 +64,21 @@ pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
     match msg {
         QueryMsg::Game {} => to_binary(&query_game(deps)?),
     }
+}
+
+#[cfg_attr(not(feature = "library"), entry_point)]
+pub fn migrate(deps: DepsMut, _env: Env, _msg: MigrateMsg) -> Result<Response, ContractError> {
+    let original_version = get_contract_version(deps.storage)?;
+    let name = CONTRACT_NAME.to_string();
+    let version = CONTRACT_VERSION.to_string();
+    if original_version.contract != name {
+        return Err(ContractError::InvalidInput {});
+    }
+    if original_version.version >= version {
+        return Err(ContractError::InvalidInput {});
+    }
+    set_contract_version(deps.storage, CONTRACT_NAME, CONTRACT_VERSION)?;
+    Ok(Response::default())
 }
 
 #[cfg(test)]

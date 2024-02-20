@@ -1,6 +1,6 @@
 [package]
 name = "network-wars"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["Drew Taylor <drew.taylor@philabs.xyz>"]
 edition = "2021"
 
