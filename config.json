@@ -5,6 +5,22 @@
     "deployments": [
       {
         "project": "network-wars",
+        "type": "migrate",
+        "chainId": "constantine-3",
+        "codeId": 2107,
+        "contract": "archway1nk2vdf34uulacy8k50rzxhsphqz3pfl8wh4r8h5gv2mlt08ytehs5p2a7w",
+        "txhash": "715611B3A1EDCE309683355C9C2A8C98BF18A7807A2F8B175DC13840A686CD95"
+      },
+      {
+        "project": "network-wars",
+        "type": "store",
+        "chainId": "constantine-3",
+        "codeId": 2107,
+        "checksum": "6de51d92754d5781cad34ad2f78ed28296810c1410e0277527e14eb2e4dd16c3",
+        "txhash": "3E6328D79983F3E82A76DCA943B01560EDF7D53F41EA5ACEA9C2213EE47A6523"
+      },
+      {
+        "project": "network-wars",
         "type": "set-metadata",
         "chainId": "constantine-3",
         "codeId": 2037,
