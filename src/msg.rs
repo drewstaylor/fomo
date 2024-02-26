@@ -17,6 +17,7 @@ pub struct InstantiateMsg {
 pub enum ExecuteMsg {
     Deposit {},
     Claim {},
+    UnlockStale {},
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]

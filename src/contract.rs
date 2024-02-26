@@ -6,7 +6,7 @@ use cosmwasm_std::{
 };
 use cw2::{get_contract_version, set_contract_version};
 
-use crate::execute::{execute_claim, execute_deposit};
+use crate::execute::{execute_claim, execute_deposit, execute_unlock_stale};
 use crate::query::{query_game};
 use crate::msg::{ExecuteMsg, InstantiateMsg, MigrateMsg, QueryMsg};
 use crate::state::{State, STATE};
@@ -57,6 +57,7 @@ pub fn execute(
     match msg {
         ExecuteMsg::Deposit {} => execute_deposit(deps, env, info),
         ExecuteMsg::Claim {} => execute_claim(deps, env, info),
+        ExecuteMsg::UnlockStale {} => execute_unlock_stale(deps, env, info),
     }
 }
 

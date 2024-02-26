@@ -17,6 +17,9 @@ pub enum ContractError {
         required: Option<Coin>,
     },
     
-    #[error("Gameplay will resume when last depositor claims their prize")]
+    #[error("Gameplay can resume when winner claims prize or it becomes stale")]
     Gameover {},
+
+    #[error("Game must be stale")]
+    NotStale {},
 }

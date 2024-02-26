@@ -47,7 +47,7 @@ pub fn execute_claim(
 
     // Game must be over
     if !state.is_expired(&env.block) {
-        return Err(ContractError::Unauthorized {});
+        return Err(ContractError::Gameover {});
     }
     
     // Caller must be winner
@@ -87,6 +87,46 @@ pub fn execute_claim(
         .add_attribute("winner", info.sender)
         .add_attribute("round", won_round)
         .add_message(bank_transfer))
+}
+
+pub fn execute_unlock_stale(
+    deps: DepsMut,
+    env: Env,
+    info: MessageInfo,
+) -> Result<Response, ContractError> {
+    let state = STATE.load(deps.storage)?;
+
+    // Game must be over
+    if !state.is_expired(&env.block) {
+        return Err(ContractError::Gameover {});
+    }
+
+    // Game over state must be stale
+    if !state.is_stale(&env.block) {
+        return Err(ContractError::NotStale {});
+    }
+
+    // Reset game, retaining the current prize pool
+    let new_expiration: u64 = env.block.time.seconds() + state.reset_length;
+    let skipped_round = state.round.to_string();
+    let round = state.round + 1;
+    let state_reset = State {
+        owner: state.owner,
+        expiration: new_expiration,
+        min_deposit: state.min_deposit,
+        last_deposit: env.block.time.seconds(),
+        last_depositor: info.sender.clone(),
+        extensions: state.extensions,
+        stale: state.stale,
+        reset_length: state.reset_length,
+        round,
+    };
+
+    STATE.save(deps.storage, &state_reset)?;
+
+    Ok(Response::new()
+        .add_attribute("action", "execute_unlock_stale")
+        .add_attribute("round", skipped_round))
 }
 
 pub fn check_sent_required_payment(
