@@ -15,9 +15,10 @@ use crate::msg::{
 use crate::contract::DENOM;
 use crate::state::{State};
 
-// When the game is won but the winner doesn't claim their funds 
-// within the allotted period, anyone can restart the game
-// and all funds from the prize pool must be carried over
+// When game is won winner must claim their prize
+// within the allotted period; otherwise, anyone can 
+// restart the game, prize pot of previous game carries
+// over
 #[test]
 fn test_unlock_stale() {
     let mut app = mock_app();

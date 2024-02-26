@@ -15,8 +15,9 @@ use crate::msg::{
 use crate::contract::DENOM;
 use crate::state::{State};
 
-// When admin pauses the game for contract upgrades, players 
-// cannot deposit or claim prizes until the admin unpauses
+// Only admin can pause. When admin pauses game, 
+// players cannot deposit or claim prizes until 
+// admin unpauses
 #[test]
 fn test_pause_unpause() {
     let mut app = mock_app();
