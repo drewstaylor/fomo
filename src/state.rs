@@ -16,6 +16,7 @@ pub struct State {
     pub stale: u64,
     pub reset_length: u64,
     pub round: u64,
+    pub paused: Option<u64>,
 }
 impl State {
     pub fn is_expired(&self, block: &BlockInfo) -> bool {
@@ -24,6 +25,9 @@ impl State {
     pub fn is_stale(&self, block: &BlockInfo) -> bool {       
         let stale = self.expiration + self.stale;
         Expiration::AtTime(Timestamp::from_seconds(stale)).is_expired(block)
+    }
+    pub fn is_paused(&self) -> bool {
+        self.paused.is_some()
     }
 }
 

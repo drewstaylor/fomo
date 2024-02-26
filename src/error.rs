@@ -22,4 +22,7 @@ pub enum ContractError {
 
     #[error("Game must be stale")]
     NotStale {},
+
+    #[error("Game play is paused")]
+    Paused {},
 }

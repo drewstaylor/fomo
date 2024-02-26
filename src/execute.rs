@@ -13,6 +13,11 @@ pub fn execute_deposit(
 ) -> Result<Response, ContractError> {
     let mut state = STATE.load(deps.storage)?;
 
+    // Game play must not be paused for upgrades
+    if state.is_paused() {
+        return Err(ContractError::Paused {});
+    }
+
     // Game must be active
     if state.is_expired(&env.block) {
         return Err(ContractError::Gameover {});
@@ -44,6 +49,11 @@ pub fn execute_claim(
     info: MessageInfo,
 ) -> Result<Response, ContractError> {
     let state = STATE.load(deps.storage)?;
+
+    // Game play must not be paused for upgrades
+    if state.is_paused() {
+        return Err(ContractError::Paused {});
+    }
 
     // Game must be over
     if !state.is_expired(&env.block) {
@@ -79,6 +89,7 @@ pub fn execute_claim(
         stale: state.stale,
         reset_length: state.reset_length,
         round,
+        paused: None,
     };
     STATE.save(deps.storage, &state_reset)?;
 
@@ -95,6 +106,11 @@ pub fn execute_unlock_stale(
     info: MessageInfo,
 ) -> Result<Response, ContractError> {
     let state = STATE.load(deps.storage)?;
+
+    // Game play must not be paused for upgrades
+    if state.is_paused() {
+        return Err(ContractError::Paused {});
+    }
 
     // Game must be over
     if !state.is_expired(&env.block) {
@@ -120,6 +136,7 @@ pub fn execute_unlock_stale(
         stale: state.stale,
         reset_length: state.reset_length,
         round,
+        paused: None,
     };
 
     STATE.save(deps.storage, &state_reset)?;
@@ -127,6 +144,66 @@ pub fn execute_unlock_stale(
     Ok(Response::new()
         .add_attribute("action", "execute_unlock_stale")
         .add_attribute("round", skipped_round))
+}
+
+// Pause game play for contract upgrades (Admin only)
+pub fn execute_pause(
+    deps: DepsMut,
+    env: Env,
+    info: MessageInfo,
+) -> Result<Response, ContractError> {
+    let mut state = STATE.load(deps.storage)?;
+
+    // Must not already be paused
+    if state.is_paused() {
+        return Err(ContractError::Paused {});
+    }
+
+    // Only Admin can pause game play for upgrades
+    if info.sender != state.owner {
+        return Err(ContractError::Unauthorized {});
+    }
+
+    let paused_at: u64 = env.block.time.seconds();
+    state.paused = Some(paused_at);
+    STATE.save(deps.storage, &state)?;
+
+    Ok(Response::new()
+        .add_attribute("action", "execute_pause")
+        .add_attribute("paused_at", paused_at.to_string()))
+}
+
+// Resume game play (unpause) after conducting upgrades
+pub fn execute_unpause(
+    deps: DepsMut,
+    env: Env,
+    info: MessageInfo,
+) -> Result<Response, ContractError> {
+    let mut state = STATE.load(deps.storage)?;
+
+    // Game must be paused
+    if !state.is_paused() {
+        return Err(ContractError::InvalidInput {});
+    }
+
+    // Only Admin can unpause game
+    if info.sender != state.owner {
+        return Err(ContractError::Unauthorized {});
+    }
+
+    // Unpause game
+    let unpaused_at: u64 = env.block.time.seconds();
+    let paused_duration: u64 = unpaused_at - state.paused.unwrap_or(unpaused_at);
+    let new_expiration: u64 = state.expiration + paused_duration;
+    state.expiration = new_expiration;
+    state.paused = None;
+    STATE.save(deps.storage, &state)?;
+
+    Ok(Response::new()
+        .add_attribute("action", "execute_unpause")
+        .add_attribute("unpaused_at", unpaused_at.to_string())
+        .add_attribute("time_paused", paused_duration.to_string())
+        .add_attribute("expiration", new_expiration.to_string()))
 }
 
 pub fn check_sent_required_payment(

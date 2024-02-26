@@ -6,7 +6,9 @@ use cosmwasm_std::{
 };
 use cw2::{get_contract_version, set_contract_version};
 
-use crate::execute::{execute_claim, execute_deposit, execute_unlock_stale};
+use crate::execute::{
+    execute_claim, execute_deposit, execute_pause, execute_unlock_stale, execute_unpause
+};
 use crate::query::{query_game};
 use crate::msg::{ExecuteMsg, InstantiateMsg, MigrateMsg, QueryMsg};
 use crate::state::{State, STATE};
@@ -38,6 +40,7 @@ pub fn instantiate(
         stale: msg.stale,
         reset_length: msg.reset_length,
         round: 1_u64,
+        paused: None,
     };
     set_contract_version(deps.storage, CONTRACT_NAME, CONTRACT_VERSION)?;
     STATE.save(deps.storage, &state)?;
@@ -58,6 +61,9 @@ pub fn execute(
         ExecuteMsg::Deposit {} => execute_deposit(deps, env, info),
         ExecuteMsg::Claim {} => execute_claim(deps, env, info),
         ExecuteMsg::UnlockStale {} => execute_unlock_stale(deps, env, info),
+        // Admin only
+        ExecuteMsg::Pause {} => execute_pause(deps, env, info),
+        ExecuteMsg::Unpause {} => execute_unpause(deps, env, info),
     }
 }
 
@@ -70,6 +76,12 @@ pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
 
 #[cfg_attr(not(feature = "library"), entry_point)]
 pub fn migrate(deps: DepsMut, _env: Env, _msg: MigrateMsg) -> Result<Response, ContractError> {
+    // Game play must be paused for upgrade
+    let state = STATE.load(deps.storage)?;
+    if !state.is_paused() {
+        return Err(ContractError::Unauthorized {});
+    }
+
     let original_version = get_contract_version(deps.storage)?;
     let name = CONTRACT_NAME.to_string();
     let version = CONTRACT_VERSION.to_string();

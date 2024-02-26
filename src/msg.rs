@@ -18,6 +18,9 @@ pub enum ExecuteMsg {
     Deposit {},
     Claim {},
     UnlockStale {},
+    // Admin only
+    Pause {},
+    Unpause {},
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
