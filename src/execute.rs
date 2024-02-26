@@ -3,6 +3,7 @@ use cosmwasm_std::{
 };
 
 use crate::contract::DENOM;
+use crate::msg::{ConfigureMsg};
 use crate::state::{State, STATE};
 use crate::error::ContractError;
 
@@ -146,7 +147,7 @@ pub fn execute_unlock_stale(
         .add_attribute("round", skipped_round))
 }
 
-// Pause game play for contract upgrades (Admin only)
+// Pause game play for contract upgrades (admin only)
 pub fn execute_pause(
     deps: DepsMut,
     env: Env,
@@ -173,7 +174,7 @@ pub fn execute_pause(
         .add_attribute("paused_at", paused_at.to_string()))
 }
 
-// Resume game play (unpause) after conducting upgrades
+// Resume / unpause game play after conducting upgrades (admin only)
 pub fn execute_unpause(
     deps: DepsMut,
     env: Env,
@@ -204,6 +205,53 @@ pub fn execute_unpause(
         .add_attribute("unpaused_at", unpaused_at.to_string())
         .add_attribute("time_paused", paused_duration.to_string())
         .add_attribute("expiration", new_expiration.to_string()))
+}
+
+// Reconfigure game parameters (admin only)
+pub fn execute_configure(
+    deps: DepsMut,
+    info: MessageInfo,
+    msg: ConfigureMsg,
+) -> Result<Response, ContractError> {
+    let mut state = STATE.load(deps.storage)?;
+
+    // Only Admin can unpause game
+    if info.sender != state.owner {
+        return Err(ContractError::Unauthorized {});
+    }
+
+    // Reconfiguration must change at least 1 value
+    if msg.owner.is_none() 
+        && msg.expiration.is_none() 
+        && msg.min_deposit.is_none()
+        && msg.extensions.is_none()
+        && msg.stale.is_none()
+        && msg.reset_length.is_none() {
+            return Err(ContractError::InvalidInput {});
+        }
+
+    // Reconfigure any parameters to be changed
+    if let Some(new_owner) = msg.owner {
+        state.owner = new_owner;
+    }
+    if let Some(new_expiration) = msg.expiration {
+        state.expiration = new_expiration;
+    }
+    if let Some(new_min_deposit) = msg.min_deposit {
+        state.min_deposit = new_min_deposit;
+    }
+    if let Some(new_extensions) = msg.extensions {
+        state.extensions = new_extensions;
+    }
+    if let Some(new_stale) = msg.stale {
+        state.stale = new_stale;
+    }
+    if let Some(new_reset_length) = msg.reset_length {
+        state.reset_length = new_reset_length;
+    }
+
+    Ok(Response::new()
+        .add_attribute("action", "execute_configure"))
 }
 
 pub fn check_sent_required_payment(

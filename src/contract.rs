@@ -7,7 +7,8 @@ use cosmwasm_std::{
 use cw2::{get_contract_version, set_contract_version};
 
 use crate::execute::{
-    execute_claim, execute_deposit, execute_pause, execute_unlock_stale, execute_unpause
+    execute_claim, execute_configure, execute_deposit, execute_pause, execute_unlock_stale, 
+    execute_unpause,
 };
 use crate::query::{query_game};
 use crate::msg::{ExecuteMsg, InstantiateMsg, MigrateMsg, QueryMsg};
@@ -64,6 +65,7 @@ pub fn execute(
         // Admin only
         ExecuteMsg::Pause {} => execute_pause(deps, env, info),
         ExecuteMsg::Unpause {} => execute_unpause(deps, env, info),
+        ExecuteMsg::Configure { msg } => execute_configure(deps, info, msg),
     }
 }
 
