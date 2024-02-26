@@ -19,7 +19,7 @@ use crate::state::{State};
 // within the allotted period, anyone can restart the game
 // and all funds from the prize pool must be carried over
 #[test]
-fn test_claim_stale() {
+fn test_unlock_stale() {
     let mut app = mock_app();
     
     // netwars owner deploys netwars

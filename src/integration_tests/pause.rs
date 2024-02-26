@@ -18,7 +18,7 @@ use crate::state::{State};
 // When admin pauses the game for contract upgrades, players 
 // cannot deposit or claim prizes until the admin unpauses
 #[test]
-fn test_pause_and_unpause() {
+fn test_pause_unpause() {
     let mut app = mock_app();
     
     // netwars owner deploys netwars

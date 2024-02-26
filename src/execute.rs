@@ -108,17 +108,17 @@ pub fn execute_unlock_stale(
 ) -> Result<Response, ContractError> {
     let state = STATE.load(deps.storage)?;
 
-    // Game play must not be paused for upgrades
+    // Game must not be paused for upgrades
     if state.is_paused() {
         return Err(ContractError::Paused {});
     }
 
-    // Game must be over
+    // Game must be ended
     if !state.is_expired(&env.block) {
         return Err(ContractError::Gameover {});
     }
 
-    // Game over state must be stale
+    // Game must be stale
     if !state.is_stale(&env.block) {
         return Err(ContractError::NotStale {});
     }
@@ -147,7 +147,7 @@ pub fn execute_unlock_stale(
         .add_attribute("round", skipped_round))
 }
 
-// Pause game play for contract upgrades (admin only)
+// Pause game for upgrade (admin only)
 pub fn execute_pause(
     deps: DepsMut,
     env: Env,
@@ -155,12 +155,12 @@ pub fn execute_pause(
 ) -> Result<Response, ContractError> {
     let mut state = STATE.load(deps.storage)?;
 
-    // Must not already be paused
+    // Must not be paused already
     if state.is_paused() {
         return Err(ContractError::Paused {});
     }
 
-    // Only Admin can pause game play for upgrades
+    // Only admin can pause
     if info.sender != state.owner {
         return Err(ContractError::Unauthorized {});
     }
