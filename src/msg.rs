@@ -8,6 +8,7 @@ pub struct InstantiateMsg {
     pub expiration: u64,
     pub min_deposit: Uint128,
     pub extensions: u64,
+    pub stale: u64,
     pub reset_length: u64,
 }
 

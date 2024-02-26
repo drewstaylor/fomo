@@ -5,7 +5,7 @@ use cosmwasm_std::{
 use cw_multi_test::Executor;
 
 use crate::integration_tests::util::{
-    bank_query, create_fomo, increment_block_time, get_block_time, 
+    bank_query, create_netwars, increment_block_time, get_block_time, 
     mint_native, mock_app, query,
 };
 
@@ -21,17 +21,17 @@ use crate::state::{State};
 fn test_claim() {
     let mut app = mock_app();
     
-    // fomo owner deploys fomo
-    let fomo_admin = Addr::unchecked("fomo_deployer");
+    // netwars owner deploys netwars
+    let netwars_admin = Addr::unchecked("netwars_deployer");
     // first_depositor owns ARCH
     let first_depositor = Addr::unchecked("arch_owner");
     // second_depositor owns ARCH
     let second_depositor = Addr::unchecked("second_arch_owner");
 
-    // mint arch to fomo_admin first_depositor and second_depositor
+    // mint arch to netwars_admin first_depositor and second_depositor
     mint_native(
         &mut app,
-        fomo_admin.to_string(),
+        netwars_admin.to_string(),
         Uint128::from(15000000000000000000_u128), // 15 ARCH as aarch
     );
     mint_native(
@@ -49,15 +49,17 @@ fn test_claim() {
     let expiration: u64 = 120; // 2 minutes
     let min_deposit =  Uint128::from(1000000000000000000_u128); // 1 ARCH as aarch
     let extension_length: u64 = 30; // 30 seconds
+    let stale: u64 = 604800; // ~1 week
     let reset_length: u64 = 604800; // ~1 week
 
-    // fomo_admin creates the fomo contract 
-    let fomo_addr: Addr = create_fomo(
+    // netwars_admin creates the netwars contract 
+    let netwars_addr: Addr = create_netwars(
         &mut app, 
-        &fomo_admin, 
+        &netwars_admin, 
         expiration.clone(), 
         min_deposit.clone(),
         extension_length.clone(),
+        stale,
         reset_length,
         &[Coin {
             denom: String::from(DENOM),
@@ -69,7 +71,7 @@ fn test_claim() {
     let _res = app
         .execute_contract(
             first_depositor.clone(), 
-            fomo_addr.clone(), 
+            netwars_addr.clone(), 
             &ExecuteMsg::Deposit{}, 
             &[Coin {
                 denom: String::from(DENOM),
@@ -82,7 +84,7 @@ fn test_claim() {
     let _res = app
         .execute_contract(
             second_depositor.clone(), 
-            fomo_addr.clone(), 
+            netwars_addr.clone(), 
             &ExecuteMsg::Deposit{}, 
             &[Coin {
                 denom: String::from(DENOM),
@@ -101,7 +103,7 @@ fn test_claim() {
     assert!(
         app.execute_contract(
             first_depositor.clone(), 
-            fomo_addr.clone(), 
+            netwars_addr.clone(), 
             &ExecuteMsg::Deposit{}, 
             &[Coin {
                 denom: String::from(DENOM),
@@ -114,7 +116,7 @@ fn test_claim() {
     assert!(app
         .execute_contract(
             first_depositor.clone(), 
-            fomo_addr.clone(), 
+            netwars_addr.clone(), 
             &ExecuteMsg::Claim{}, 
             &[]
         )
@@ -126,15 +128,15 @@ fn test_claim() {
     let _res = app
         .execute_contract(
             second_depositor.clone(), 
-            fomo_addr.clone(), 
+            netwars_addr.clone(), 
             &ExecuteMsg::Claim{}, 
             &[]
         )
         .unwrap();
     
     // game balance is now 0
-    let fomo_balance: Coin = bank_query(&mut app, &fomo_addr);
-    assert_eq!(fomo_balance.amount, Uint128::from(0_u128));
+    let netwars_balance: Coin = bank_query(&mut app, &netwars_addr);
+    assert_eq!(netwars_balance.amount, Uint128::from(0_u128));
 
     // second_depositor's balance is now 17 ARCH 
     // (seed funds + first deposit + second deposit)
@@ -145,7 +147,7 @@ fn test_claim() {
     // round was increased
     let game_query: State = query(
         &mut app,
-        fomo_addr.clone(),
+        netwars_addr.clone(),
         QueryMsg::Game{},
     ).unwrap();
     assert_eq!(game_query.round, 2_u64);
@@ -155,7 +157,7 @@ fn test_claim() {
     let _res = app
         .execute_contract(
             first_depositor, 
-            fomo_addr.clone(), 
+            netwars_addr.clone(), 
             &ExecuteMsg::Deposit{}, 
             &[Coin {
                 denom: String::from(DENOM),
@@ -163,6 +165,6 @@ fn test_claim() {
             }]
         )
         .unwrap();
-    let fomo_balance: Coin = bank_query(&mut app, &fomo_addr);
-    assert_eq!(fomo_balance.amount, Uint128::from(2000000000000000000_u128));
+    let netwars_balance: Coin = bank_query(&mut app, &netwars_addr);
+    assert_eq!(netwars_balance.amount, Uint128::from(2000000000000000000_u128));
 }

@@ -76,6 +76,7 @@ pub fn execute_claim(
         last_deposit: env.block.time.seconds(),
         last_depositor: info.sender.clone(),
         extensions: state.extensions,
+        stale: state.stale,
         reset_length: state.reset_length,
         round,
     };

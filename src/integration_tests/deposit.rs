@@ -5,7 +5,7 @@ use cosmwasm_std::{
 use cw_multi_test::Executor;
 
 use crate::integration_tests::util::{
-    bank_query, create_fomo, mint_native, mock_app, query,
+    bank_query, create_netwars, mint_native, mock_app, query,
 };
 
 use crate::msg::{
@@ -20,8 +20,8 @@ use crate::state::{State};
 fn test_deposit() {
     let mut app = mock_app();
     
-    // fomo owner deploys fomo
-    let fomo_admin = Addr::unchecked("fomo_deployer");
+    // netwars owner deploys netwars
+    let netwars_admin = Addr::unchecked("netwars_deployer");
     // depositor owns ARCH
     let depositor = Addr::unchecked("arch_owner");
 
@@ -36,28 +36,30 @@ fn test_deposit() {
     let expiration: u64 = 604800; // ~1 week
     let min_deposit =  Uint128::from(1000000000000000000_u128); // 1 ARCH as aarch
     let extension_length: u64 = 3600; // 1 hour 
+    let stale: u64 = 604800; // ~1 week
     let reset_length: u64 = 604800; // ~1 week
 
-    // fomo_admin creates the fomo contract 
-    let fomo_addr: Addr = create_fomo(
+    // netwars_admin creates the netwars contract 
+    let netwars_addr: Addr = create_netwars(
         &mut app, 
-        &fomo_admin, 
+        &netwars_admin, 
         expiration.clone(), 
         min_deposit.clone(),
         extension_length.clone(),
+        stale,
         reset_length,
         &[],
     );
 
-    // contract balance (fomo prize) is currently 0
-    let fomo_balance: Coin = bank_query(&mut app, &fomo_addr);
-    assert_eq!(fomo_balance.amount, Uint128::from(0_u128));
+    // contract balance (netwars prize) is currently 0
+    let netwars_balance: Coin = bank_query(&mut app, &netwars_addr);
+    assert_eq!(netwars_balance.amount, Uint128::from(0_u128));
 
     // depositor must send at least the min_deposit amount
     assert!(
         app.execute_contract(
             depositor.clone(), 
-            fomo_addr.clone(), 
+            netwars_addr.clone(), 
             &ExecuteMsg::Deposit{}, 
             &[Coin {
                 denom: String::from(DENOM),
@@ -69,13 +71,13 @@ fn test_deposit() {
     // depositing a valid amount must increase the game timer
     let initial_game_state: State = query(
         &mut app,
-        fomo_addr.clone(),
+        netwars_addr.clone(),
         QueryMsg::Game{},
     ).unwrap();
     let _res = app
         .execute_contract(
             depositor.clone(), 
-            fomo_addr.clone(), 
+            netwars_addr.clone(), 
             &ExecuteMsg::Deposit{}, 
             &[Coin {
                 denom: String::from(DENOM),
@@ -85,13 +87,13 @@ fn test_deposit() {
         .unwrap();
     let game_query: State = query(
         &mut app,
-        fomo_addr.clone(),
+        netwars_addr.clone(),
         QueryMsg::Game{},
     ).unwrap();
     let expected_expiration: u64 = initial_game_state.expiration + extension_length;
     assert_eq!(game_query.expiration, expected_expiration);
 
     // prize pool must be increased
-    let fomo_balance: Coin = bank_query(&mut app, &fomo_addr);
-    assert_eq!(fomo_balance.amount, Uint128::from(1000000000000000000_u128));
+    let netwars_balance: Coin = bank_query(&mut app, &netwars_addr);
+    assert_eq!(netwars_balance.amount, Uint128::from(1000000000000000000_u128));
 }

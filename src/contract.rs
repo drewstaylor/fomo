@@ -35,6 +35,7 @@ pub fn instantiate(
         last_deposit: env.block.time.seconds(),
         last_depositor: info.sender.clone(),
         extensions: msg.extensions,
+        stale: msg.stale,
         reset_length: msg.reset_length,
         round: 1_u64,
     };
@@ -114,8 +115,9 @@ mod tests {
         let msg = InstantiateMsg {
             expiration: expires,
             min_deposit: Uint128::from(1000000u128),
-            reset_length: reset, 
             extensions: extends,
+            stale: reset.clone(),
+            reset_length: reset,
         };
         let info = mock_info("creator", &coins(1000, "token"));
         instantiate(deps, mock_env(), info, msg).unwrap()

@@ -27,7 +27,7 @@ pub fn increment_block_time(router: &mut App, new_time: u64, height_incr: u64) {
     router.set_block(curr);
 }
 
-pub fn contract_fomo() -> Box<dyn Contract<Empty>> {
+pub fn contract_netwars() -> Box<dyn Contract<Empty>> {
     let contract = ContractWrapper::new(
         crate::contract::execute,
         crate::contract::instantiate,
@@ -36,27 +36,29 @@ pub fn contract_fomo() -> Box<dyn Contract<Empty>> {
     Box::new(contract)
 }
 
-pub fn create_fomo(
+pub fn create_netwars(
     router: &mut App, 
     owner: &Addr,
     expiration: u64, 
     min_deposit: Uint128, 
     extensions: u64,
+    stale: u64,
     reset_length: u64,
     funds: &[Coin],
 ) -> Addr {
-    let fomo_id = router.store_code(contract_fomo());
+    let netwars_id = router.store_code(contract_netwars());
     let msg = InstantiateMsg {
         expiration,
         min_deposit,
         extensions,
+        stale,
         reset_length,
     };
-    let fomo_addr = router
-        .instantiate_contract(fomo_id, owner.clone(), &msg, funds, "Fomo", None)
+    let netwars_addr = router
+        .instantiate_contract(netwars_id, owner.clone(), &msg, funds, "Fomo", None)
         .unwrap();
     
-    fomo_addr
+    netwars_addr
 }
 
 pub fn mint_native(app: &mut App, beneficiary: String, amount: Uint128) {
