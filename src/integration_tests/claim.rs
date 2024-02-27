@@ -56,6 +56,7 @@ fn test_claim() {
     let netwars_addr: Addr = create_netwars(
         &mut app, 
         &netwars_admin, 
+        None,
         expiration.clone(), 
         min_deposit.clone(),
         extension_length.clone(),

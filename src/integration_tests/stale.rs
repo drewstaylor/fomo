@@ -65,6 +65,7 @@ fn test_unlock_stale() {
     let netwars_addr: Addr = create_netwars(
         &mut app, 
         &netwars_admin, 
+        None,
         expiration, 
         min_deposit.clone(),
         extension_length.clone(),

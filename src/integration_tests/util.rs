@@ -39,6 +39,7 @@ pub fn contract_netwars() -> Box<dyn Contract<Empty>> {
 pub fn create_netwars(
     router: &mut App, 
     owner: &Addr,
+    archid_registry: Option<Addr>,
     expiration: u64, 
     min_deposit: Uint128, 
     extensions: u64,
@@ -48,7 +49,7 @@ pub fn create_netwars(
 ) -> Addr {
     let netwars_id = router.store_code(contract_netwars());
     let msg = InstantiateMsg {
-        archid_registry: None,
+        archid_registry,
         expiration,
         min_deposit,
         extensions,
