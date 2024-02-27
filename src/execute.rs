@@ -251,7 +251,7 @@ pub fn execute_configure(
             return Err(ContractError::InvalidInput {});
         }
 
-    // Reconfigure game parameters
+    // Game settings
     if let Some(new_owner) = msg.owner {
         state.owner = new_owner;
     }
