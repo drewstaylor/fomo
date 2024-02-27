@@ -10,7 +10,8 @@
     "min_deposit",
     "owner",
     "reset_length",
-    "round"
+    "round",
+    "stale"
   ],
   "properties": {
     "expiration": {
@@ -37,12 +38,25 @@
     "owner": {
       "$ref": "#/definitions/Addr"
     },
+    "paused": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "format": "uint64",
+      "minimum": 0.0
+    },
     "reset_length": {
       "type": "integer",
       "format": "uint64",
       "minimum": 0.0
     },
     "round": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0.0
+    },
+    "stale": {
       "type": "integer",
       "format": "uint64",
       "minimum": 0.0

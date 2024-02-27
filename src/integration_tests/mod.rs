@@ -1,4 +1,7 @@
 pub mod util;
 
-mod deposit;
+mod archid;
 mod claim;
+mod deposit;
+mod pause;
+mod stale;

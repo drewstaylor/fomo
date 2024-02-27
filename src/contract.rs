@@ -6,10 +6,13 @@ use cosmwasm_std::{
 };
 use cw2::{get_contract_version, set_contract_version};
 
-use crate::execute::{execute_claim, execute_deposit};
+use crate::execute::{
+    execute_claim, execute_configure, execute_deposit, execute_pause, execute_unlock_stale, 
+    execute_unpause,
+};
 use crate::query::{query_game};
 use crate::msg::{ExecuteMsg, InstantiateMsg, MigrateMsg, QueryMsg};
-use crate::state::{State, STATE};
+use crate::state::{Archid, ARCHID, State, STATE};
 use crate::error::ContractError;
 
 // Mainnet
@@ -35,11 +38,23 @@ pub fn instantiate(
         last_deposit: env.block.time.seconds(),
         last_depositor: info.sender.clone(),
         extensions: msg.extensions,
+        stale: msg.stale,
         reset_length: msg.reset_length,
         round: 1_u64,
+        paused: None,
     };
     set_contract_version(deps.storage, CONTRACT_NAME, CONTRACT_VERSION)?;
     STATE.save(deps.storage, &state)?;
+
+    let archid_registry = msg.archid_registry.clone();
+    if let Some(contract_addr) = archid_registry {
+        let archid = Archid {
+            registry: Some(contract_addr),
+        };
+        ARCHID.save(deps.storage, &archid)?;   
+    } else { 
+        ARCHID.save(deps.storage, &Archid{registry: None})?;
+    }
 
     Ok(Response::new()
         .add_attribute("action", "instantiate")
@@ -56,6 +71,11 @@ pub fn execute(
     match msg {
         ExecuteMsg::Deposit {} => execute_deposit(deps, env, info),
         ExecuteMsg::Claim {} => execute_claim(deps, env, info),
+        ExecuteMsg::UnlockStale {} => execute_unlock_stale(deps, env, info),
+        // Admin only
+        ExecuteMsg::Pause {} => execute_pause(deps, env, info),
+        ExecuteMsg::Unpause {} => execute_unpause(deps, env, info),
+        ExecuteMsg::Configure { msg } => execute_configure(deps, info, msg),
     }
 }
 
@@ -68,6 +88,12 @@ pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
 
 #[cfg_attr(not(feature = "library"), entry_point)]
 pub fn migrate(deps: DepsMut, _env: Env, _msg: MigrateMsg) -> Result<Response, ContractError> {
+    // Game play must be paused for upgrade
+    let state = STATE.load(deps.storage)?;
+    if !state.is_paused() {
+        return Err(ContractError::Unauthorized {});
+    }
+
     let original_version = get_contract_version(deps.storage)?;
     let name = CONTRACT_NAME.to_string();
     let version = CONTRACT_VERSION.to_string();
@@ -112,10 +138,12 @@ mod tests {
         let expires: u64 = env.block.time.seconds() + extends.clone();
         
         let msg = InstantiateMsg {
+            archid_registry: None,
             expiration: expires,
             min_deposit: Uint128::from(1000000u128),
-            reset_length: reset, 
             extensions: extends,
+            stale: reset.clone(),
+            reset_length: reset,
         };
         let info = mock_info("creator", &coins(1000, "token"));
         instantiate(deps, mock_env(), info, msg).unwrap()

@@ -15,10 +15,11 @@ use crate::msg::{
 use crate::contract::DENOM;
 use crate::state::{State};
 
-// When the game is won the winner can claim
-// all funds from the prize pool
+// Only admin can pause. When admin pauses game, 
+// players cannot deposit or claim prizes until 
+// admin unpauses
 #[test]
-fn test_claim() {
+fn test_pause_unpause() {
     let mut app = mock_app();
     
     // netwars owner deploys netwars
@@ -93,6 +94,51 @@ fn test_claim() {
             }]
         )
         .unwrap();
+
+    // admin pauses the game
+    assert!(app
+        .execute_contract(
+            netwars_admin.clone(), 
+            netwars_addr.clone(), 
+            &ExecuteMsg::Pause{}, 
+            &[]
+        ).is_ok()
+    );
+
+    // players can't deposit to paused games
+    assert!(app
+        .execute_contract(
+            first_depositor.clone(), 
+            netwars_addr.clone(), 
+            &ExecuteMsg::Deposit{}, 
+            &[Coin {
+                denom: String::from(DENOM),
+                amount: Uint128::from(1000000000000000000_u128)
+            }]
+        ).is_err()
+    );
+
+    assert!(app
+        .execute_contract(
+            second_depositor.clone(),
+            netwars_addr.clone(), 
+            &ExecuteMsg::Deposit{}, 
+            &[Coin {
+                denom: String::from(DENOM),
+                amount: Uint128::from(1000000000000000000_u128)
+            }]
+        ).is_err()
+    );
+
+    // admin unpauses the game
+    assert!(app
+        .execute_contract(
+            netwars_admin.clone(), 
+            netwars_addr.clone(), 
+            &ExecuteMsg::Unpause{},
+            &[]
+        ).is_ok()
+    );
     
     // if expiration is expired game winner must be
     // able to claim the prize pool amount
@@ -123,7 +169,57 @@ fn test_claim() {
         )
         .is_err()
     );
-    
+
+    // random cannot pause the game
+    assert!(app
+        .execute_contract(
+            first_depositor.clone(), 
+            netwars_addr.clone(), 
+            &ExecuteMsg::Pause{}, 
+            &[]
+        ).is_err()
+    );
+
+    // admin pauses the game
+    assert!(app
+        .execute_contract(
+            netwars_admin.clone(), 
+            netwars_addr.clone(), 
+            &ExecuteMsg::Pause{}, 
+            &[]
+        ).is_ok()
+    );
+
+    // winner can't the claim prize if game is paused
+    assert!(app
+        .execute_contract(
+            second_depositor.clone(), 
+            netwars_addr.clone(), 
+            &ExecuteMsg::Claim{}, 
+            &[]
+        ).is_err()
+    );
+
+    // random can't unpause the game
+    assert!(app
+        .execute_contract(
+            first_depositor.clone(), 
+            netwars_addr.clone(), 
+            &ExecuteMsg::Unpause{}, 
+            &[]
+        ).is_err()
+    );
+
+    // admin unpauses the game
+    assert!(app
+        .execute_contract(
+            netwars_admin.clone(), 
+            netwars_addr.clone(), 
+            &ExecuteMsg::Unpause{},
+            &[]
+        ).is_ok()
+    );
+
     // winner can claim prize 
     // (resets / restarts game)
     let _res = app

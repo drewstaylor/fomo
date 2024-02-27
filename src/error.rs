@@ -16,7 +16,16 @@ pub enum ContractError {
     InsufficientFunds {
         required: Option<Coin>,
     },
+
+    #[error("Players must own an ArchID")]
+    NoArchid {},
     
-    #[error("Gameplay will resume when last depositor claims their prize")]
+    #[error("Gameplay can resume when winner claims prize or it becomes stale")]
     Gameover {},
+
+    #[error("Game must be stale")]
+    NotStale {},
+
+    #[error("Game play is paused")]
+    Paused {},
 }
