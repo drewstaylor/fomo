@@ -41,7 +41,7 @@ pub enum QueryMsg {
 #[serde(rename_all = "snake_case")]
 pub struct ConfigureMsg {
     pub owner: Option<Addr>,
-    pub archid_token: Option<Addr>,
+    pub archid_registry: Option<Addr>,
     pub expiration: Option<u64>,
     pub min_deposit: Option<Uint128>,
     pub extensions: Option<u64>,

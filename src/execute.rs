@@ -7,7 +7,7 @@ use archid_registry::msg::{QueryMsg as QueryMsgArchid, ResolveAddressResponse};
 
 use crate::contract::DENOM;
 use crate::msg::{ConfigureMsg};
-use crate::state::{ARCHID, State, STATE};
+use crate::state::{Archid, ARCHID, State, STATE};
 use crate::error::ContractError;
 
 pub fn execute_deposit(
@@ -242,6 +242,7 @@ pub fn execute_configure(
 
     // Reconfiguration must change at least 1 value
     if msg.owner.is_none() 
+        && msg.archid_registry.is_none()
         && msg.expiration.is_none() 
         && msg.min_deposit.is_none()
         && msg.extensions.is_none()
@@ -250,7 +251,7 @@ pub fn execute_configure(
             return Err(ContractError::InvalidInput {});
         }
 
-    // Reconfigure any parameters to be changed
+    // Reconfigure game parameters
     if let Some(new_owner) = msg.owner {
         state.owner = new_owner;
     }
@@ -269,6 +270,16 @@ pub fn execute_configure(
     if let Some(new_reset_length) = msg.reset_length {
         state.reset_length = new_reset_length;
     }
+
+    // ArchID settings
+    if let Some(new_archid_registry) = msg.archid_registry {
+        let archid = Archid {
+            registry: Some(new_archid_registry),
+        };
+        ARCHID.save(deps.storage, &archid)?;
+    }
+
+    STATE.save(deps.storage, &state)?;
 
     Ok(Response::new()
         .add_attribute("action", "execute_configure"))
