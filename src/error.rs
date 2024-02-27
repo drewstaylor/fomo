@@ -16,6 +16,9 @@ pub enum ContractError {
     InsufficientFunds {
         required: Option<Coin>,
     },
+
+    #[error("Players must own an ArchID")]
+    NoArchid {},
     
     #[error("Gameplay can resume when winner claims prize or it becomes stale")]
     Gameover {},

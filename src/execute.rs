@@ -1,10 +1,13 @@
 use cosmwasm_std::{
-    BankMsg, CosmosMsg, Coin, DepsMut, Env, MessageInfo, Response,
+    BankMsg, CosmosMsg, Coin, DepsMut, Env, MessageInfo, QueryRequest, Response,
+    to_binary, WasmQuery
 };
+
+use archid_registry::msg::{QueryMsg as QueryMsgArchid, ResolveAddressResponse};
 
 use crate::contract::DENOM;
 use crate::msg::{ConfigureMsg};
-use crate::state::{State, STATE};
+use crate::state::{ARCHID, State, STATE};
 use crate::error::ContractError;
 
 pub fn execute_deposit(
@@ -22,6 +25,23 @@ pub fn execute_deposit(
     // Game must be active
     if state.is_expired(&env.block) {
         return Err(ContractError::Gameover {});
+    }
+
+    // Sender should own an ArchID
+    let archid = ARCHID.load(deps.storage)?;
+    if let Some(contract_addr) = archid.registry {
+        let query_msg: archid_registry::msg::QueryMsg = QueryMsgArchid::ResolveAddress { 
+            address: info.sender.clone(),
+        };
+        let request = QueryRequest::Wasm(WasmQuery::Smart {
+            contract_addr: contract_addr.to_string(),
+            msg: to_binary(&query_msg).unwrap(),
+        });
+        let response: ResolveAddressResponse = deps.querier.query(&request)?;
+        let valid_archids: Vec<String> = if response.names.is_some() { response.names.unwrap() } else { vec![] };
+        if valid_archids.is_empty() {
+            return Err(ContractError::NoArchid {});
+        }
     }
 
     // Sender must have sent correct funds
@@ -51,12 +71,12 @@ pub fn execute_claim(
 ) -> Result<Response, ContractError> {
     let state = STATE.load(deps.storage)?;
 
-    // Game play must not be paused for upgrades
+    // Game play must not be paused
     if state.is_paused() {
         return Err(ContractError::Paused {});
     }
 
-    // Game must be over
+    // Game must be ended
     if !state.is_expired(&env.block) {
         return Err(ContractError::Gameover {});
     }

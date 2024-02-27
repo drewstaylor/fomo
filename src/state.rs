@@ -32,3 +32,10 @@ impl State {
 }
 
 pub const STATE: Item<State> = Item::new("state");
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+pub struct Archid {
+    pub registry: Option<Addr>,
+}
+
+pub const ARCHID: Item<Archid> = Item::new("archid");

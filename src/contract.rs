@@ -12,7 +12,7 @@ use crate::execute::{
 };
 use crate::query::{query_game};
 use crate::msg::{ExecuteMsg, InstantiateMsg, MigrateMsg, QueryMsg};
-use crate::state::{State, STATE};
+use crate::state::{Archid, ARCHID, State, STATE};
 use crate::error::ContractError;
 
 // Mainnet
@@ -45,6 +45,16 @@ pub fn instantiate(
     };
     set_contract_version(deps.storage, CONTRACT_NAME, CONTRACT_VERSION)?;
     STATE.save(deps.storage, &state)?;
+
+    let archid_registry = msg.archid_registry.clone();
+    if let Some(contract_addr) = archid_registry {
+        let archid = Archid {
+            registry: Some(contract_addr),
+        };
+        ARCHID.save(deps.storage, &archid)?;   
+    } else { 
+        ARCHID.save(deps.storage, &Archid{registry: None})?;
+    }
 
     Ok(Response::new()
         .add_attribute("action", "instantiate")
@@ -128,6 +138,7 @@ mod tests {
         let expires: u64 = env.block.time.seconds() + extends.clone();
         
         let msg = InstantiateMsg {
+            archid_registry: None,
             expiration: expires,
             min_deposit: Uint128::from(1000000u128),
             extensions: extends,

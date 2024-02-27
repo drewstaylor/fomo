@@ -48,6 +48,7 @@ pub fn create_netwars(
 ) -> Addr {
     let netwars_id = router.store_code(contract_netwars());
     let msg = InstantiateMsg {
+        archid_registry: None,
         expiration,
         min_deposit,
         extensions,
@@ -55,7 +56,7 @@ pub fn create_netwars(
         reset_length,
     };
     let netwars_addr = router
-        .instantiate_contract(netwars_id, owner.clone(), &msg, funds, "Fomo", None)
+        .instantiate_contract(netwars_id, owner.clone(), &msg, funds, "Netwars", None)
         .unwrap();
     
     netwars_addr
