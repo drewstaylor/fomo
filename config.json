@@ -5,6 +5,44 @@
     "deployments": [
       {
         "project": "network-wars",
+        "type": "set-metadata",
+        "chainId": "constantine-3",
+        "codeId": 2378,
+        "txhash": "F3A82D5EDB89F1CEF4098B36B32CF3F09A0D41E18B16A0D4CAB5DE0988F32F02",
+        "contract": "archway1e76vzy5xkrpu5cf2h56dnx092kkq2yzncrv82q8rzkn33cfpsvqsk7mhr5",
+        "contractMetadata": {
+          "ownerAddress": "archway1f395p0gg67mmfd5zcqvpnp9cxnu0hg6r9hfczq",
+          "rewardsAddress": "archway1f395p0gg67mmfd5zcqvpnp9cxnu0hg6r9hfczq"
+        }
+      },
+      {
+        "project": "network-wars",
+        "type": "instantiate",
+        "chainId": "constantine-3",
+        "codeId": 2378,
+        "txhash": "5B2EEF77AD5F1A3933CB67801F8DF1B7CF2B417910F831AB93BB424BB351BA5B",
+        "address": "archway1e76vzy5xkrpu5cf2h56dnx092kkq2yzncrv82q8rzkn33cfpsvqsk7mhr5",
+        "admin": "archway1f395p0gg67mmfd5zcqvpnp9cxnu0hg6r9hfczq",
+        "label": "network-wars 0.1.3",
+        "args": {
+          "archid_registry": "archway1lr8rstt40s697hqpedv2nvt27f4cuccqwvly9gnvuszxmcevrlns60xw4r",
+          "expiration": 86400,
+          "min_deposit": "1000000000000000000",
+          "extensions": 15,
+          "stale": 86400,
+          "reset_length": 86400
+        }
+      },
+      {
+        "project": "network-wars",
+        "type": "store",
+        "chainId": "constantine-3",
+        "codeId": 2378,
+        "checksum": "10a1a413f88208f667dca976fc1c3c05e5d59fed7522242294b20c7d7e341768",
+        "txhash": "C1A258D9E3860DBF69F0D05CA921B867EC57D95012387FDD87960D7141D2F933"
+      },
+      {
+        "project": "network-wars",
         "type": "migrate",
         "chainId": "constantine-3",
         "codeId": 2107,
