@@ -1,7 +1,7 @@
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-use cosmwasm_std::{Addr, BlockInfo, Timestamp, Uint128};
+use cosmwasm_std::{Addr, BlockInfo, MessageInfo, Timestamp, Uint128};
 use cw_storage_plus::Item;
 use cw_utils::Expiration;
 
@@ -18,7 +18,16 @@ pub struct State {
     pub round: u64,
     pub paused: Option<u64>,
 }
+
 impl State {
+    pub fn reset(&mut self, block_time: u64, info: &MessageInfo) {
+        self.expiration = block_time + self.reset_length;
+        self.last_deposit = block_time;
+        self.last_depositor = info.sender.clone();
+        self.round += 1;
+        self.paused = None;
+    }
+
     pub fn is_expired(&self, block: &BlockInfo) -> bool {
         Expiration::AtTime(Timestamp::from_seconds(self.expiration)).is_expired(block)
     }
@@ -33,9 +42,4 @@ impl State {
 
 pub const STATE: Item<State> = Item::new("state");
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
-pub struct Archid {
-    pub registry: Option<Addr>,
-}
-
-pub const ARCHID: Item<Archid> = Item::new("archid");
+pub const ARCHID: Item<Addr> = Item::new("archid");
