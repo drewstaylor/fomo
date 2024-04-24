@@ -12,7 +12,7 @@ use crate::execute::{
 };
 use crate::query::{query_game};
 use crate::msg::{ExecuteMsg, InstantiateMsg, MigrateMsg, QueryMsg};
-use crate::state::{Archid, ARCHID, State, STATE};
+use crate::state::{ARCHID, State, STATE};
 use crate::error::ContractError;
 
 // Mainnet
@@ -48,12 +48,7 @@ pub fn instantiate(
 
     let archid_registry = msg.archid_registry.clone();
     if let Some(contract_addr) = archid_registry {
-        let archid = Archid {
-            registry: Some(contract_addr),
-        };
-        ARCHID.save(deps.storage, &archid)?;   
-    } else { 
-        ARCHID.save(deps.storage, &Archid{registry: None})?;
+        ARCHID.save(deps.storage, &contract_addr)?;
     }
 
     Ok(Response::new()

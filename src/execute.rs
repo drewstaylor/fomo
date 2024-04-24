@@ -7,7 +7,7 @@ use archid_registry::msg::{QueryMsg as QueryMsgArchid, ResolveAddressResponse};
 
 use crate::contract::DENOM;
 use crate::msg::{ConfigureMsg};
-use crate::state::{Archid, ARCHID, State, STATE};
+use crate::state::{ARCHID, STATE};
 use crate::error::ContractError;
 
 pub fn execute_deposit(
@@ -28,8 +28,7 @@ pub fn execute_deposit(
     }
 
     // Sender should own an ArchID
-    let archid = ARCHID.load(deps.storage)?;
-    if let Some(contract_addr) = archid.registry {
+    if let Some(contract_addr) = ARCHID.may_load(deps.storage)? {
         let query_msg: archid_registry::msg::QueryMsg = QueryMsgArchid::ResolveAddress { 
             address: info.sender.clone(),
         };
@@ -38,7 +37,7 @@ pub fn execute_deposit(
             msg: to_binary(&query_msg).unwrap(),
         });
         let response: ResolveAddressResponse = deps.querier.query(&request)?;
-        let valid_archids: Vec<String> = if response.names.is_some() { response.names.unwrap() } else { vec![] };
+        let valid_archids: Vec<String> = response.names.unwrap_or(vec![]);
         if valid_archids.is_empty() {
             return Err(ContractError::NoArchid {});
         }
@@ -52,8 +51,7 @@ pub fn execute_deposit(
     check_sent_required_payment(&info.funds, Some(required_payment))?;
 
     // Update state with deposit parameters
-    let new_expiration: u64 = state.expiration + state.extensions;
-    state.expiration = new_expiration;
+    state.expiration += state.extensions;
     state.last_deposit = env.block.time.seconds();
     state.last_depositor = info.sender.clone();
     STATE.save(deps.storage, &state)?;
@@ -61,7 +59,7 @@ pub fn execute_deposit(
     Ok(Response::new()
         .add_attribute("action", "execute_deposit")
         .add_attribute("round", state.round.to_string())
-        .add_attribute("depositer", info.sender))
+        .add_attribute("depositor", info.sender))
 }
 
 pub fn execute_claim(
@@ -69,7 +67,7 @@ pub fn execute_claim(
     env: Env,
     info: MessageInfo,
 ) -> Result<Response, ContractError> {
-    let state = STATE.load(deps.storage)?;
+    let mut state = STATE.load(deps.storage)?;
 
     // Game play must not be paused
     if state.is_paused() {
@@ -94,25 +92,13 @@ pub fn execute_claim(
         to_address: info.sender.clone().into(),
         amount: vec![contract_funds],
     };
-    let bank_transfer: CosmosMsg = cosmwasm_std::CosmosMsg::Bank(bank_transfer_msg);
+    let bank_transfer: CosmosMsg = CosmosMsg::Bank(bank_transfer_msg);
 
     // Reset game
-    let new_expiration: u64 = env.block.time.seconds() + state.reset_length;
     let won_round = state.round.to_string();
-    let round = state.round + 1;
-    let state_reset = State {
-        owner: state.owner,
-        expiration: new_expiration,
-        min_deposit: state.min_deposit,
-        last_deposit: env.block.time.seconds(),
-        last_depositor: info.sender.clone(),
-        extensions: state.extensions,
-        stale: state.stale,
-        reset_length: state.reset_length,
-        round,
-        paused: None,
-    };
-    STATE.save(deps.storage, &state_reset)?;
+    state.reset(env.block.time.seconds(), &info);
+
+    STATE.save(deps.storage, &state)?;
 
     Ok(Response::new()
         .add_attribute("action", "execute_claim")
@@ -126,7 +112,7 @@ pub fn execute_unlock_stale(
     env: Env,
     info: MessageInfo,
 ) -> Result<Response, ContractError> {
-    let state = STATE.load(deps.storage)?;
+    let mut state = STATE.load(deps.storage)?;
 
     // Game must not be paused for upgrades
     if state.is_paused() {
@@ -144,23 +130,10 @@ pub fn execute_unlock_stale(
     }
 
     // Reset game, retaining the current prize pool
-    let new_expiration: u64 = env.block.time.seconds() + state.reset_length;
     let skipped_round = state.round.to_string();
-    let round = state.round + 1;
-    let state_reset = State {
-        owner: state.owner,
-        expiration: new_expiration,
-        min_deposit: state.min_deposit,
-        last_deposit: env.block.time.seconds(),
-        last_depositor: info.sender.clone(),
-        extensions: state.extensions,
-        stale: state.stale,
-        reset_length: state.reset_length,
-        round,
-        paused: None,
-    };
+    state.reset(env.block.time.seconds(), &info);
 
-    STATE.save(deps.storage, &state_reset)?;
+    STATE.save(deps.storage, &state)?;
 
     Ok(Response::new()
         .add_attribute("action", "execute_unlock_stale")
@@ -273,10 +246,7 @@ pub fn execute_configure(
 
     // ArchID settings
     if let Some(new_archid_registry) = msg.archid_registry {
-        let archid = Archid {
-            registry: Some(new_archid_registry),
-        };
-        ARCHID.save(deps.storage, &archid)?;
+        ARCHID.save(deps.storage, &new_archid_registry)?;
     }
 
     STATE.save(deps.storage, &state)?;
