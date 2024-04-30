@@ -91,6 +91,16 @@
     "ConfigureMsg": {
       "type": "object",
       "properties": {
+        "archid_cw721": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/Addr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
         "archid_registry": {
           "anyOf": [
             {
