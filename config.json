@@ -5,6 +5,22 @@
     "deployments": [
       {
         "project": "network-wars",
+        "type": "migrate",
+        "chainId": "archway-1",
+        "codeId": 421,
+        "contract": "archway19kc7um7kyept3xvd5pmw2dsgma0g9d9d86gde8z4dkasu607wy6qvt5dej",
+        "txhash": ""
+      },
+      {
+        "project": "network-wars",
+        "type": "store",
+        "chainId": "archway-1",
+        "codeId": 421,
+        "checksum": "b549cbaefa5bbc04af21f092136ffe03e62c93f7c69e00a94aaba1b956f60440",
+        "txhash": "05406EC56CB643F7CB9C0457C9151A364CD7BD4C843368C837C30B963A0FA8FB"
+      },
+      {
+        "project": "network-wars",
         "type": "store",
         "chainId": "archway-1",
         "codeId": 420,
