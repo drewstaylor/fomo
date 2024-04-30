@@ -6,6 +6,44 @@
       {
         "project": "network-wars",
         "type": "set-metadata",
+        "chainId": "archway-1",
+        "codeId": 419,
+        "txhash": "0B6CD2EA8CD0AC58766E7F3C328C8E40E931BEB50F569AA690D9D2D614E94F2F",
+        "contract": "archway19kc7um7kyept3xvd5pmw2dsgma0g9d9d86gde8z4dkasu607wy6qvt5dej",
+        "contractMetadata": {
+          "ownerAddress": "archway1f395p0gg67mmfd5zcqvpnp9cxnu0hg6r9hfczq",
+          "rewardsAddress": "archway1f395p0gg67mmfd5zcqvpnp9cxnu0hg6r9hfczq"
+        }
+      },
+      {
+        "project": "network-wars",
+        "type": "instantiate",
+        "chainId": "archway-1",
+        "codeId": 419,
+        "txhash": "BB221CBB235ADC052A863239DE2400A55D528D716282DDC7A8B85CD185273560",
+        "address": "archway19kc7um7kyept3xvd5pmw2dsgma0g9d9d86gde8z4dkasu607wy6qvt5dej",
+        "admin": "archway1f395p0gg67mmfd5zcqvpnp9cxnu0hg6r9hfczq",
+        "label": "Network Wars",
+        "args": {
+          "archid_registry": "archway1275jwjpktae4y4y0cdq274a2m0jnpekhttnfuljm6n59wnpyd62qppqxq0",
+          "expiration": 345600,
+          "min_deposit": "25000000000000000000",
+          "extensions": 30,
+          "stale": 3600,
+          "reset_length": 86400
+        }
+      },
+      {
+        "project": "network-wars",
+        "type": "store",
+        "chainId": "archway-1",
+        "codeId": 419,
+        "checksum": "2b634c54c20793856ba7ff12aa04b1bc954b4dc3f6c9bb21506569275b70eb86",
+        "txhash": "41AA8D88423CEA9ADAD6255E10B7DF2956B3842381359D70326D85C2D46AA732"
+      },
+      {
+        "project": "network-wars",
+        "type": "set-metadata",
         "chainId": "constantine-3",
         "codeId": 2378,
         "txhash": "F3A82D5EDB89F1CEF4098B36B32CF3F09A0D41E18B16A0D4CAB5DE0988F32F02",
@@ -160,14 +198,14 @@
     ]
   },
   "network": {
-    "name": "constantine",
-    "chainId": "constantine-3",
-    "type": "testnet",
+    "name": "Archway",
+    "chainId": "archway-1",
+    "type": "mainnet",
     "fees": {
-      "feeDenom": "aconst"
+      "feeDenom": "aarch"
     },
     "gas": {
-      "prices": "900000000000.000000000000000000aconst",
+      "prices": "900000000000.000000000000000000aarch",
       "mode": "auto",
       "adjustment": 1.4
     },
@@ -179,7 +217,7 @@
     },
     "urls": {
       "rpc": {
-        "url": "https://rpc.constantine.archway.tech",
+        "url": "https://rpc.mainnet.archway.io",
         "port": 443
       }
     }
