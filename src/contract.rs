@@ -84,10 +84,10 @@ pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
 #[cfg_attr(not(feature = "library"), entry_point)]
 pub fn migrate(deps: DepsMut, _env: Env, _msg: MigrateMsg) -> Result<Response, ContractError> {
     // Game play must be paused for upgrade
-    let state = STATE.load(deps.storage)?;
-    if !state.is_paused() {
-        return Err(ContractError::Unauthorized {});
-    }
+    // let state = STATE.load(deps.storage)?;
+    // if !state.is_paused() {
+    //     return Err(ContractError::Unauthorized {});
+    // }
 
     let original_version = get_contract_version(deps.storage)?;
     let name = CONTRACT_NAME.to_string();

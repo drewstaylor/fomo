@@ -5,6 +5,14 @@
     "deployments": [
       {
         "project": "network-wars",
+        "type": "store",
+        "chainId": "archway-1",
+        "codeId": 420,
+        "checksum": "ba84d6e87157f28df3688cd0829974a6fd1e6f60257126bcc6e4e92ec2e4f8f2",
+        "txhash": "AEF9BB1CED9E82A5A96F0AFD46BADCF770E77F28EFA7D00EF4F8A4FD6A883ED1"
+      },
+      {
+        "project": "network-wars",
         "type": "set-metadata",
         "chainId": "archway-1",
         "codeId": 419,
