@@ -66,7 +66,7 @@ pub fn execute_deposit(
     Ok(Response::new()
         .add_attribute("action", "execute_deposit")
         .add_attribute("round", state.round.to_string())
-        .add_attribute("depositer", info.sender))
+        .add_attribute("depositor", info.sender))
 }
 
 pub fn execute_claim(
