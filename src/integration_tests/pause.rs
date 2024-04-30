@@ -58,6 +58,7 @@ fn test_pause_unpause() {
         &mut app, 
         &netwars_admin, 
         None,
+        None,
         expiration.clone(), 
         min_deposit.clone(),
         extension_length.clone(),

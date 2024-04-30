@@ -1,7 +1,7 @@
 #[cfg(not(feature = "library"))]
 use cosmwasm_std::entry_point;
 use cosmwasm_std::{
-    to_binary, Binary, Deps, DepsMut, Env, MessageInfo, Response, 
+    Addr, to_binary, Binary, Deps, DepsMut, Env, MessageInfo, Response, 
     StdResult,
 };
 use cw2::{get_contract_version, set_contract_version};
@@ -46,15 +46,10 @@ pub fn instantiate(
     set_contract_version(deps.storage, CONTRACT_NAME, CONTRACT_VERSION)?;
     STATE.save(deps.storage, &state)?;
 
-    let archid_registry = msg.archid_registry.clone();
-    if let Some(contract_addr) = archid_registry {
-        let archid = Archid {
-            registry: Some(contract_addr),
-        };
-        ARCHID.save(deps.storage, &archid)?;   
-    } else { 
-        ARCHID.save(deps.storage, &Archid{registry: None})?;
-    }
+    let registry = if msg.archid_registry.is_some() { msg.archid_registry } else { None };
+    let cw721 = if msg.archid_cw721.is_some() { msg.archid_cw721 } else { None };
+    let archid = Archid {registry, cw721};
+    ARCHID.save(deps.storage, &archid)?;
 
     Ok(Response::new()
         .add_attribute("action", "instantiate")
@@ -103,6 +98,18 @@ pub fn migrate(deps: DepsMut, _env: Env, _msg: MigrateMsg) -> Result<Response, C
     if original_version.version >= version {
         return Err(ContractError::InvalidInput {});
     }
+
+    // Add state migration for ArchID contracts
+    // (1 time migration)
+    let registry: Addr = deps.api.addr_validate("archway1275jwjpktae4y4y0cdq274a2m0jnpekhttnfuljm6n59wnpyd62qppqxq0")?;
+    let cw721: Addr = deps.api.addr_validate("archway1cf5rq0amcl5m2flqrtl4gw2mdl3zdec9vlp5hfa9hgxlwnmrlazsdycu4l")?;
+    let archid = Archid {
+        registry: Some(registry),
+        cw721: Some(cw721),
+    };
+    ARCHID.save(deps.storage, &archid)?;
+    // End state migrations
+
     set_contract_version(deps.storage, CONTRACT_NAME, CONTRACT_VERSION)?;
     Ok(Response::default())
 }
@@ -139,6 +146,7 @@ mod tests {
         
         let msg = InstantiateMsg {
             archid_registry: None,
+            archid_cw721: None,
             expiration: expires,
             min_deposit: Uint128::from(1000000u128),
             extensions: extends,

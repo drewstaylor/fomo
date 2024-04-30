@@ -24,28 +24,13 @@ name = "archid-registry"
 version = "1.0.2"
 source = "git+https://github.com/archid-protocol/archid-registry.git?branch=main#d8a62275036fdf5f7ee45fd6981e93a277a48922"
 dependencies = [
- "archid-token 1.0.2 (git+https://github.com/archid-protocol/archid-token.git)",
+ "archid-token",
  "cosmwasm-std",
  "cosmwasm-storage",
  "cw-storage-plus 0.12.1",
  "cw-utils 0.14.0",
  "cw2 0.12.1",
- "cw721-updatable 1.0.2",
- "schemars",
- "serde",
- "thiserror",
-]
-
-[[package]]
-name = "archid-token"
-version = "1.0.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7a6209cb566e5912686e5f47f57199d3b15d92b961b15524c0e7ad1cf6fc0f92"
-dependencies = [
- "cosmwasm-std",
- "cw2 0.11.1",
- "cw721-archid 1.0.3 (registry+https://github.com/rust-lang/crates.io-index)",
- "cw721-updatable 1.0.5",
+ "cw721-updatable",
  "schemars",
  "serde",
  "thiserror",
@@ -58,8 +43,8 @@ source = "git+https://github.com/archid-protocol/archid-token.git#d9570361e1f6c9
 dependencies = [
  "cosmwasm-std",
  "cw2 0.11.1",
- "cw721-archid 1.0.3 (git+https://github.com/archid-protocol/cw721-updatable.git)",
- "cw721-updatable 1.0.2",
+ "cw721-archid",
+ "cw721-updatable",
  "schemars",
  "serde",
  "thiserror",
@@ -373,19 +358,15 @@ dependencies = [
 ]
 
 [[package]]
-name = "cw721-archid"
-version = "1.0.3"
+name = "cw721"
+version = "0.13.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1ab37afe89b85b9c600b9b86935dee7b2b7b0a4305f9f3564167bd9b0159a04e"
+checksum = "035818368a74c07dd9ed5c5a93340199ba251530162010b9f34c3809e3b97df1"
 dependencies = [
  "cosmwasm-std",
- "cw-storage-plus 0.13.4",
  "cw-utils 0.13.4",
- "cw2 0.13.4",
- "cw721-updatable 1.0.5",
  "schemars",
  "serde",
- "thiserror",
 ]
 
 [[package]]
@@ -397,7 +378,7 @@ dependencies = [
  "cw-storage-plus 0.13.4",
  "cw-utils 0.13.4",
  "cw2 0.13.4",
- "cw721-updatable 1.0.2",
+ "cw721-updatable",
  "schemars",
  "serde",
  "thiserror",
@@ -407,18 +388,6 @@ dependencies = [
 name = "cw721-updatable"
 version = "1.0.2"
 source = "git+https://github.com/archid-protocol/cw721-updatable.git#40ff34de901c342a4f5b60151500d8b0c33a9ba9"
-dependencies = [
- "cosmwasm-std",
- "cw-utils 0.13.4",
- "schemars",
- "serde",
-]
-
-[[package]]
-name = "cw721-updatable"
-version = "1.0.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b4e1e852df297049ac0a0dca3077ab3f83262c4d17e746738af4662eb8ff74ff"
 dependencies = [
  "cosmwasm-std",
  "cw-utils 0.13.4",
@@ -638,10 +607,10 @@ checksum = "89d92a4743f9a61002fae18374ed11e7973f530cb3a3255fb354818118b2203c"
 
 [[package]]
 name = "network-wars"
-version = "0.1.3"
+version = "0.1.4"
 dependencies = [
  "archid-registry",
- "archid-token 1.0.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "archid-token",
  "cosmwasm-schema",
  "cosmwasm-std",
  "cosmwasm-storage",
@@ -649,6 +618,7 @@ dependencies = [
  "cw-storage-plus 0.14.0",
  "cw-utils 0.14.0",
  "cw2 0.14.0",
+ "cw721",
  "schemars",
  "serde",
  "thiserror",

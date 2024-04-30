@@ -65,6 +65,7 @@ pub fn create_netwars(
     router: &mut App, 
     owner: &Addr,
     archid_registry: Option<Addr>,
+    archid_cw721: Option<Addr>,
     expiration: u64, 
     min_deposit: Uint128, 
     extensions: u64,
@@ -75,6 +76,7 @@ pub fn create_netwars(
     let netwars_id = router.store_code(contract_netwars());
     let msg = InstantiateMsg {
         archid_registry,
+        archid_cw721,
         expiration,
         min_deposit,
         extensions,

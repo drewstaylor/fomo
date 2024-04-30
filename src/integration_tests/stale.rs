@@ -66,6 +66,7 @@ fn test_unlock_stale() {
         &mut app, 
         &netwars_admin, 
         None,
+        None,
         expiration, 
         min_deposit.clone(),
         extension_length.clone(),

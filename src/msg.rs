@@ -6,6 +6,7 @@ use cosmwasm_std::{Addr, Uint128};
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct InstantiateMsg {
     pub archid_registry: Option<Addr>,
+    pub archid_cw721: Option<Addr>,
     pub expiration: u64,
     pub min_deposit: Uint128,
     pub extensions: u64,
@@ -42,6 +43,7 @@ pub enum QueryMsg {
 pub struct ConfigureMsg {
     pub owner: Option<Addr>,
     pub archid_registry: Option<Addr>,
+    pub archid_cw721: Option<Addr>,
     pub expiration: Option<u64>,
     pub min_deposit: Option<Uint128>,
     pub extensions: Option<u64>,

@@ -13,7 +13,6 @@ use archid_registry::{
     state::Config as RegistryConfig, msg::ExecuteMsg as ExecuteMsgArchid
 };
 
-
 use crate::msg::{
     ExecuteMsg, QueryMsg,
 };
@@ -59,7 +58,7 @@ fn test_enforce_archid() {
         config: RegistryConfig {
             admin: netwars_admin.clone(),
             wallet: netwars_admin.clone(),
-            cw721: cw721_addr,
+            cw721: cw721_addr.clone(),
             base_cost: Uint128::from(5000u64),
             base_expiration: 86400,
         },
@@ -81,6 +80,7 @@ fn test_enforce_archid() {
         &mut app, 
         &netwars_admin, 
         Some(archid_addr.clone()),
+        Some(cw721_addr),
         expiration.clone(), 
         min_deposit.clone(),
         extension_length.clone(),

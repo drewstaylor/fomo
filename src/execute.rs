@@ -3,7 +3,11 @@ use cosmwasm_std::{
     to_binary, WasmQuery
 };
 
-use archid_registry::msg::{QueryMsg as QueryMsgArchid, ResolveAddressResponse};
+// use archid_registry::msg::{QueryMsg as QueryMsgArchid, ResolveAddressResponse};
+use cw721::TokensResponse;
+use archid_token::{
+    QueryMsg as Cw721QueryMsg, Extension,
+};
 
 use crate::contract::DENOM;
 use crate::msg::{ConfigureMsg};
@@ -29,17 +33,18 @@ pub fn execute_deposit(
 
     // Sender should own an ArchID
     let archid = ARCHID.load(deps.storage)?;
-    if let Some(contract_addr) = archid.registry {
-        let query_msg: archid_registry::msg::QueryMsg = QueryMsgArchid::ResolveAddress { 
-            address: info.sender.clone(),
+    if let Some(contract_addr) = archid.cw721 {
+        let query_msg: archid_token::QueryMsg<Extension> = Cw721QueryMsg::Tokens {
+            owner: info.sender.clone().into(),
+            start_after: None,
+            limit: None,
         };
-        let request = QueryRequest::Wasm(WasmQuery::Smart {
+        let query_req = QueryRequest::Wasm(WasmQuery::Smart {
             contract_addr: contract_addr.to_string(),
             msg: to_binary(&query_msg).unwrap(),
         });
-        let response: ResolveAddressResponse = deps.querier.query(&request)?;
-        let valid_archids: Vec<String> = if response.names.is_some() { response.names.unwrap() } else { vec![] };
-        if valid_archids.is_empty() {
+        let query_resp: TokensResponse = deps.querier.query(&query_req)?;
+        if query_resp.tokens.is_empty() {
             return Err(ContractError::NoArchid {});
         }
     }
@@ -272,10 +277,10 @@ pub fn execute_configure(
     }
 
     // ArchID settings
-    if let Some(new_archid_registry) = msg.archid_registry {
-        let archid = Archid {
-            registry: Some(new_archid_registry),
-        };
+    let registry = if msg.archid_registry.is_some() { msg.archid_registry } else { None };
+    let cw721 = if msg.archid_cw721.is_some() { msg.archid_cw721 } else { None };
+    if registry.is_some() && cw721.is_some() {
+        let archid = Archid {registry, cw721};
         ARCHID.save(deps.storage, &archid)?;
     }
 
