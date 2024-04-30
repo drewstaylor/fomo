@@ -22,7 +22,7 @@ checksum = "080e9890a082662b09c1ad45f567faeeb47f22b5fb23895fbe1e651e718e25ca"
 [[package]]
 name = "archid-registry"
 version = "1.0.2"
-source = "git+https://github.com/archid-protocol/archid-registry.git?branch=deployments/constantine#48cae571c73736d4c8cd849719431105e364290a"
+source = "git+https://github.com/archid-protocol/archid-registry.git?branch=main#d8a62275036fdf5f7ee45fd6981e93a277a48922"
 dependencies = [
  "archid-token 1.0.2 (git+https://github.com/archid-protocol/archid-token.git)",
  "cosmwasm-std",

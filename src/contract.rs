@@ -16,9 +16,9 @@ use crate::state::{Archid, ARCHID, State, STATE};
 use crate::error::ContractError;
 
 // Mainnet
-// pub static DENOM: &str = "aarch";
+pub static DENOM: &str = "aarch";
 // Testnet
-pub static DENOM: &str = "aconst";
+// pub static DENOM: &str = "aconst";
 
 // version info for migration info
 const CONTRACT_NAME: &str = "network-wars";
